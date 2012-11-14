@@ -1,0 +1,23 @@
+<meta name="generator" content="Wirby" />
+
+<link rel="stylesheet" type="text/css" href="wirby/assets/bootstrap.min.css" />
+<script type="text/javascript" src="wirby/assets/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="{$assets_loader}"></script>
+<script type="text/javascript" language="javascript">
+
+  head.js( "{function="join('","',$assets_js)"}" );
+
+  {if="c::get('is_admin')"}
+  head.js( "{function="join('","',$assets_admin)"}" );
+  {/if}
+
+  head.ready( function(){
+    {$assets_callback}();
+
+    {if="c::get('is_admin')"}
+    wirby = new Wirby();
+    {/if}
+  });
+
+</script>

@@ -1,0 +1,18 @@
+[submodule ".gitmodule/meekrodb"]
+	path = .gitmodule/meekrodb
+	url = git://github.com/Meekro/meekrodb.git
+[submodule ".gitmodule/raintpl"]
+	path = .gitmodule/raintpl
+	url = git://github.com/rainphp/raintpl.git
+[submodule ".gitmodule/phpmailer"]
+	path = .gitmodule/phpmailer
+	url = git://github.com/Synchro/PHPMailer.git
+[submodule ".gitmodule/ckeditor"]
+	path = .gitmodule/ckeditor
+	url = git://github.com/ckeditor/ckeditor-dev.git
+[submodule ".gitmodule/kirby-toolkit"]
+	path = .gitmodule/kirby-toolkit
+	url = git://github.com/bastianallgeier/kirby.git
+[submodule ".gitmodule/headjs"]
+	path = .gitmodule/headjs
+	url = git://github.com/headjs/headjs.git
