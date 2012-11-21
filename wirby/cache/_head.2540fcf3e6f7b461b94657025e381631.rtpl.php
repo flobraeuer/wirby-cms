@@ -10,24 +10,9 @@
 <!--link rel="stylesheet" href="<?php echo $site;?>/assets/style.css" type="text/css" media="screen" /-->
 <link rel="shortcut icon" href="favicon.ico">
 
-<script type="text/javascript" language="javascript">
-  window.maps_ready = function(){ console.log("maps loaded"); /*if($.isFunction(showMaps)) showMaps();*/ };
-  window.site_ready = function(){ console.log("wirby ready"); };
-</script>
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet" type="text/css">
 
-<script type="text/javascript" language="javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-7082989-14']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-</script>
+<link type="text/css" rel="stylesheet" href="<?php echo $site;?>/assets/style.css" />
 
-<script type="text/javascript" src="https://apis.google.com/js/plusone.js">
-  {lang: 'de'}
-</script>
+<script type="text/javascript" src="<?php echo $site;?>/assets/script.js"></script>
 
-<meta name="msvalidate.01" content="3703F5612A984D5F37D1B6A043A76C59" />

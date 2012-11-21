@@ -1,5 +1,8 @@
 <?php
 
+if(!isset($root)) die("Wirby: Please add '$root = dirname(__FILE__);' before you require Wirby's load.php");
+if(floatval(phpversion()) < 5.2) die("Wirby: Please upgrade to PHP 5.2+ which is necessary for its dependencies");
+
 $libs = $root."/wirby/libs";
 $base = $root."/wirby/base";
 
@@ -25,13 +28,16 @@ require_once( $libs."/".c::get("lib_tmpl") );
 
 require_once( $base."/init.php" );
 require_once( $base."/tmpl.php" );
-//require_once( "$path/". "mail" );
+require_once( $base."/pages.php" );
 
 function wirby(){
-  connect();
   route();
+  session();
+  actions();
+  $data = connect();
+  $html = render();
 
-  return render();
+  return $html;
 }
 
 ?>
