@@ -16,3 +16,6 @@
 [submodule ".gitmodule/headjs"]
 	path = .gitmodule/headjs
 	url = git://github.com/headjs/headjs.git
+[submodule ".gitmodule/icanhaz"]
+	path = .gitmodule/icanhaz
+	url = git://github.com/andyet/ICanHaz.js

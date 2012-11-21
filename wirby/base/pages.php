@@ -1,37 +1,30 @@
 <?php
-require_once "bottle-db.php";
 
 /**
- * class to access the content (stored in a db)
- *
- * @package default
- * @author erich
+ * Wirby CMS
  */
-class ShipContent {
 
-  private $contents_raw;
-  private $contents;
-  private $debug = false;
+function actions(){
+  $request = r::get("type","");
 
-  function __construct($site) {
-    // Content assign
-    $this->contents_raw = DB::query("SELECT title, content FROM contents WHERE site=%s", $site);
-    $this->contents = array();
-    foreach ($this->contents_raw as $content) {
-      $title = $content["title"];
-      $this->contents[$title] = $content["content"];
-    }
-    if($this->debug) print_r($this->contents);
-  }
+  if( $request == "update" && r::is_post() ){
+    if( $contents = r::get("contents",false) ){
 
-  public function get($title) {
-    if (array_key_exists($title, $this->contents)) {
-      return $this->contents[$title];
-    } else {
-      return "sry, gibts noch nicht";
+      $length = count($contents);
+      $titles = "";
+      foreach($contents as $title => $content){
+        $existing = db::row( "contents", array("id"), array("title" => $title, "site" => c::get("site")) );
+        if($existing){
+          $update = db::update( "contents", array("content" => $content), array("id" => $existing["id"]) );
+        }else{
+          $insert = db::insert( "contents", array("content" => $content, "title" => $title, "site" => c::get("site")) );
+        }
+        $titles.= "$title,";
+      }
+      c::set("has_info", $length." ".($length>1?"Einträge":"Eintrag")." neu");
+      //$track = track("content", $length.": ".$titles);
     }
   }
-
 }
 
 ?>

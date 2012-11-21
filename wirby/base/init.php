@@ -7,8 +7,11 @@
 date_default_timezone_set("Europe/Vienna");
 error_reporting(E_ALL); // E_STRICT
 ini_set("display_errors", true);
-c::set("has_error", false);
-c::set("has_info", false);
+c::set("has_error", false); // error message
+c::set("has_info", false);  // info msg
+c::set("in_wirby", false);  // we opened the CMS
+c::set("is_admin", false);  // we logged in sucessfully
+s::start();
 
 /**
  * Database
@@ -17,9 +20,9 @@ c::set("has_info", false);
 function connect(){
   if(! db::connect() ){
     die("Wirby: database connection failed! check config file");
-  } else { c::set("db.password", "***"); } // delete it
+  } else { c::set("db.password", "***"); } // delete it caz it's unnecessary
 
-  $data = db::connection();
+  return db::connection();
 }
 
 /**
@@ -45,6 +48,42 @@ function route(){
     die("Wirby: please create a routes.php file and specify domains over there.");
   }
 }
+
+/**
+ * Admin
+ */
+
+function session(){
+  $request = r::get("type", "");
+
+  if( $request == "logout"){
+    s::remove("user");
+  }
+  elseif( $request == "login" && r::is_post() ){
+    $user = r::get("user","");
+    $pass = r::get("pass","");
+
+    if( strlen($user) && strlen($pass) ){
+      if($user=="celik" && $pass="erfolg"){
+        s::set("user", array(
+          $user,
+          "Musa Celik"
+        ));
+      }
+      else{ c::set("has_error", "Benutzer und Passwort passen nicht zueinander."); }
+    }
+    else{ c::set("has_error", "Bitte gib einen Benutzernamen und ein Passwort ein."); }
+  }
+
+  if( r::get("edit") ){
+    c::set("in_wirby", true);
+  }
+  if( s::get("user") ){
+    c::set("in_wirby", true);
+    c::set("is_admin", s::get("user"));
+  }
+}
+
 
 /**
  * Debugging

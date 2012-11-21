@@ -2,9 +2,9 @@
 
 function render(){
   global $root;
-  c::set("cache_path",   $root."/".c::get("cache_path")."/" ); // cache directory (default in wirby folder)
-  c::set("tmpls_path",   $root."/".c::get("site")."/".c::get("tmpls_path")."/" ); // template dir in project folder
-  c::set("tmpls_intern", $root."/"."wirby/assets/");
+  c::set("cache_path", $root."/".c::get("cache_path")."/" ); // cache directory (default in wirby folder)
+  c::set("tmpls_path", $root."/".c::get("site")."/".c::get("tmpls_path")."/" ); // template dir in project folder
+  c::set("wirby_path", $root."/"."wirby/assets/"); // template dir for internal wirby dom
 
   /**
    * Engine
@@ -18,6 +18,17 @@ function render(){
   // $tmpl->configure( "base_url", c::get("base_url") );
 
   /**
+   * Content
+   */
+
+  $contents_raw = db::select( "contents", array("title", "content"), array("site" => c::get("site")) );
+  $contents = array();
+  foreach ($contents_raw as $content) { // map the result
+    $contents[$content["title"]] = $content["content"];
+  };
+  c::set("content", $contents); // push it to the c class
+
+  /**
    * Assignments
    */
 
@@ -28,26 +39,14 @@ function render(){
   $tmpls->assign( "date", date("His") );  // cache
 
   /**
-   * Content
-   */
-
-  $contents_raw = db::select( "contents", array("title","content") ); //, array("site" => c::get("site"))
-  $contents = array();
-  foreach ($contents_raw as $content) { // map the result
-    $contents[$content["title"]] = $content["content"];
-  };
-
-  $tmpls->assign( "content", $contents );
-
-  /**
    * Render
    */
 
-  $html = $tmpls->draw( "layout", $return_string = true );
+  $html = $tmpls->draw( c::get("tmpls_main"), $return_string = true );
 
   if(! c::get("function_head")) die("Wirby: you have to include Wirby's head in your templates, use this: {function='_head()'}");
   if(! c::get("function_body")) die("Wirby: you have to include Wirby's body in your templates, use this: {function='_body()'}");
-  // this is executed inside the template in the function above (everything is prozedural)
+  // _head and _body are executed inside the template inside this draw function above (everything is prozedural!)
 
   return $html;
 }
@@ -64,18 +63,22 @@ function asset_path($file){
   echo "/".c::get("site")."/assets/".$file;
 }
 
-function _head($template="_head"){
+function tmpl_wirby($template){
+  $wirby_tmpl = new RainTPL();       // it's not possible to access an static var with 'c::get' or 'global $tmpl'
+  $wirby_tmpl->assign( c::get() );   // therefore we have to reassign it to the new instance
+  $wirby_tmpl->configure( "tpl_dir", c::get("wirby_path") );  // attention: that's global inside raintpl.php
+  echo $wirby_tmpl->draw( $template, $return_string = true ); // so after reconfig the site-tmpls' path is wrong
+  $wirby_tmpl->configure( "tpl_dir", c::get("tmpls_path") );  // workaround
+}
+
+function _head(){
   c::set("function_head", true);
-  $tmpls_intern = new RainTPL();
-  $tmpls_intern->assign(c::get());
-  $tmpls_intern->configure( "tpl_dir", c::get("tmpls_intern") ); // attention: that's global inside raintpl.php
-  echo $tmpls_intern->draw( $template, $return_string = true ); // so after reconfig the site-tmpls' path is wrong
-  $tmpls_intern->configure( "tpl_dir", c::get("tmpls_path") ); // workaround
+  tmpl_wirby("_head");
 }
 
 function _body(){
   c::set("function_body", true);
-  _head("_body");
+  tmpl_wirby("_body");
 }
 
 // Caching

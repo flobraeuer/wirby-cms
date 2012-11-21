@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>M&M Obst und Gemüse</title>
+
+{function="_head()"}
+{include="_head"}
+
+</head>
+<body>
+  {if="$is_admin"}<form id="wirby-form" method="post" accept-charset="utf-8" enctype="multipart/form-data">{/if}
+  {function="_body()"}
+
+  <noscript><div class="alert alert-error">Sie haben in ihrem Browser leider kein Javascript aktiviert. Es kann zu Anzeigeproblemen kommen!</div></noscript>
+
+  <div class="container" id="container">
+
+    <div class="row-fluid" id="header">
+      <img id="logo" src="gemuese/assets/logo.png" />
+
+      <p id="leap">
+        Obst und Gemüse
+        <span class="hidden-phone">täglich frisch</span>
+        <span class="sub-leap">Familienbetrieb Celik seit 1996</span>
+      </p>
+
+      <ul id="tab-menu" class="horizontal">
+        <li><a id="tab-offer" href="#offer">Angebote</a></li>
+        <li><a id="tab-order" href="#order">Online Bestellung</a></li>
+        <li><a id="tab-about" href="#about">Unternehmen</a></li>
+        <li><a id="tab-where" href="#where">Kontakt</a></li>
+      </ul>
+    </div>
+
+    <div class="row-fluid">
+      <div id="content" class="span11 offset1">
+
+        <div class="tab-content">
+          <div class="tab-pane fade" id="offer">{include="offer"}</div>
+          <div class="tab-pane fade" id="order">{include="order"}</div>
+          <div class="tab-pane fade" id="about">{include="about"}</div>
+          <div class="tab-pane fade" id="where">{include="where"}</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {if="$is_admin"}<input name="type" type="hidden" value="update"></form>{/if}
+</body>
+</html>
