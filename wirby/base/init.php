@@ -5,25 +5,13 @@
  */
 
 date_default_timezone_set("Europe/Vienna");
-error_reporting(E_ALL); // E_STRICT
+error_reporting(E_STRICT); // E_ALL
 ini_set("display_errors", true);
 c::set("has_error", false); // error message
 c::set("has_info", false);  // info msg
 c::set("in_wirby", false);  // we opened the CMS
 c::set("is_admin", false);  // we logged in sucessfully
 s::start();
-
-/**
- * Database
- */
-
-function connect(){
-  if(! db::connect() ){
-    die("Wirby: database connection failed! check config file");
-  } else { c::set("db.password", "***"); } // delete it caz it's unnecessary
-
-  return db::connection();
-}
 
 /**
  * Routing
@@ -47,43 +35,29 @@ function route(){
   else {                                    // there are no domains at all
     die("Wirby: please create a routes.php file and specify domains over there.");
   }
+
+  $page_default = c::get("ajax") ? false : c::get("start_page"); // ajax: no startpage, but all pages | no-ajax: startpage
+  $page = r::get("page", $page_default);
+  // find synonyms
+  $pages = c::get("pages");
+  if($pages) $pages = $pages[c::get("site")];
+  if($pages) $synonym = $pages[$page];
+  if($synonym) $page = $synonym;
+  // eveything else is done in content
+  c::set("page", $page);
 }
 
 /**
- * Admin
+ * Database connect
  */
 
-function session(){
-  $request = r::get("type", "");
+function database(){
+  if(! db::connect() ){
+    die("Wirby: database connection failed! check config file");
+  } else { c::set("db.password", "***"); } // delete it caz it's unnecessary
 
-  if( $request == "logout"){
-    s::remove("user");
-  }
-  elseif( $request == "login" && r::is_post() ){
-    $user = r::get("user","");
-    $pass = r::get("pass","");
-
-    if( strlen($user) && strlen($pass) ){
-      if($user=="celik" && $pass="erfolg"){
-        s::set("user", array(
-          $user,
-          "Musa Celik"
-        ));
-      }
-      else{ c::set("has_error", "Benutzer und Passwort passen nicht zueinander."); }
-    }
-    else{ c::set("has_error", "Bitte gib einen Benutzernamen und ein Passwort ein."); }
-  }
-
-  if( r::get("edit") ){
-    c::set("in_wirby", true);
-  }
-  if( s::get("user") ){
-    c::set("in_wirby", true);
-    c::set("is_admin", s::get("user"));
-  }
+  return db::connection();
 }
-
 
 /**
  * Debugging

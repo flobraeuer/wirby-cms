@@ -1,23 +1,60 @@
+var wirbies = [];
+
 function wirby_ready(){
   log("CMS: started");
 
   // Editors
-  var editors = $("[data-wirby]");
-  $("#wirby-editors").text(editors.length+" Editoren");
-  log("CMS: "+editors.length+" Editors found");
+  wirbies = $("[data-wirby]");
+  $("#wirby-editors").text(wirbies.length+" Editoren");
+  log("CMS: "+wirbies.length+" Editors found");
 
-  // Add Hover Effect
-  editors.each(function(i,el){
-    var info = $(el).attr("data-wirby").split(" ");
-    $(el).data("wirby", {"type": info[0], "id": info[1]})
-         .addClass("wirby-"+info[0])
-         .bind("click", function(){ makeEditor(this); });
+  // Init CKEditor
+  wirbies.each(function(i, elm){
+    $(elm).attr("contenteditable", "true");
+    var ckeditor = {
+      //removePlugins:  "colorbutton,find,flash,font," +
+      //                "forms,iframe,image,newpage,removeformat," +
+      //                "smiley,specialchar,stylescombo,templates",
+      toolbarGroups: [
+        { name: "undo", groups: [ "undo", "cleanup" ] },
+        { name: "basicstyles", groups: [ "basicstyles", "links" ] },
+        //{ name: "editing",     groups: [ "find", "selection", "spellchecker" ] },
+        //{ name: "insert" },
+        //{ name: "forms" },
+        //{ name: "others" },
+        //{ name: "document",    groups: [ "mode", "document", "doctools" ] },
+        //{ name: "colors" }
+        //{ name: "styles" }
+        //{ name: "about" }
+      ]
+    };
+    if(! $(elm).is("h1,h2,h3,h4,h5,h6,span,a")){
+      ckeditor.toolbarGroups.push(
+        { name: "clipboard",   groups: [ "clipboard", "undo" ] }
+      );
+    }
+    if($(elm).is("div")){
+      ckeditor.toolbarGroups.push(
+        "/",
+        { name: "align" },
+        { name: "paragraph",   groups: [ "list", "indent" ] },
+        { name: "blocks", groups: [ "blocks", "tools" ] },
+        { name: "find" }
+      );
+    };
+
+    CKEDITOR.inline(elm, ckeditor);
+
+  //   var info = $(el).attr("data-wirby").split(" ");
+  //   $(el).data("wirby", {"type": info[0], "id": info[1]})
+  //        .addClass("wirby-"+info[0])
+  //        .bind("click", function(){ makeEditor(this); });
   });
 
   // Bind Form Event
-  $("form#wirby-form").bind("submit", function(e){
-    if(!confirm("Sollen die Inhalte nun gespeichert werden?")) e.preventDefault();
-  });
+  // $("form#wirby-form").bind("submit", function(e){
+  //   if(!confirm("Sollen die Inhalte nun gespeichert werden?")) e.preventDefault();
+  // });
 };
 
 function saveEditors(){
@@ -26,8 +63,8 @@ function saveEditors(){
     areas.each(function(i){
       $(this).val( $.trim( $(this).val().replace(/\n/g, "<br />") ) );
       if ($(this).val().match(/\w+(\(a\))\w+/g)){
-        var link = "<a href='#' target='_self' 'title'='Emailprogramm öffnen'>" //var link = $("<a>").attr({"href":"#", "target":"_self", "title":"Emailprogramm öffnen"});
-                 + $(this).val().match(/(\S+\(a\)\S+)/)[0] + "</a>";
+        //var link = "<a href="#" target="_self" "title"="Emailprogramm öffnen">" //var link = $("<a>").attr({"href":"#", "target":"_self", "title":"Emailprogramm öffnen"});
+        //         + $(this).val().match(/(\S+\(a\)\S+)/)[0] + "</a>";
         $(this).val( $(this).val().replace(/\S+\(a\)\S+/g, link) );
       };
     });
@@ -100,27 +137,28 @@ function wysiwyg(id, less){
   //  form.parent().removeClass("timeline");
   //  log("CKeditor loaded for "+form.attr("id"));
   //},
-  CKEDITOR.replace(id, {
-    language : 'de',
-    uiColor : '#eee',
-    height: "400",
-    width: "700",
 
-    // removeDialogTabs = 'flash:advanced;image:Link',
-    resize_dir : 'vertical',
-    bodyClass : (form.parent().attr("class") || ""),
-    contentsCss: '/gemuese/assets/style.css',
-    enterMode : CKEDITOR.ENTER_BR,
+  //CKEDITOR.replace(id, {
+  //  language : "de",
+  //  uiColor : "#eee",
+  //  height: "400",
+  //  width: "700",
 
-    format_tags : 'h2;p',
+  //  // removeDialogTabs = "flash:advanced;image:Link",
+  //  resize_dir : "vertical",
+  //  bodyClass : (form.parent().attr("class") || ""),
+  //  contentsCss: "/gemuese/assets/style.css",
+  //  enterMode : CKEDITOR.ENTER_BR,
 
-    toolbar : (less ? 'tiny' : 'small'),
-    toolbar_small : [
-      ['Undo','Redo','Copy','Paste','RemoveFormat','-','Link','Unlink','-','Source'],
-      ['Bold','Italic','-','NumberedList','BulletedList','Outdent','Indent','CreateDiv','-','Format']
-    ],
-    toolbar_tiny : [
-      ['Undo','Redo','-','Link','Unlink','-','Source']
-    ]
-  });
+  //  format_tags : "h2;p",
+
+  //  toolbar : (less ? "tiny" : "small"),
+  //  toolbar_small : [
+  //    ["Undo","Redo","Copy","Paste","RemoveFormat","-","Link","Unlink","-","Source"],
+  //    ["Bold","Italic","-","NumberedList","BulletedList","Outdent","Indent","CreateDiv","-","Format"]
+  //  ],
+  //  toolbar_tiny : [
+  //    ["Undo","Redo","-","Link","Unlink","-","Source"]
+  //  ]
+  //});
 };

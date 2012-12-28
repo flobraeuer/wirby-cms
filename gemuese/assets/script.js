@@ -1,40 +1,44 @@
 function maps_ready(){
-  console.log("maps loaded"); /*if($.isFunction(showMaps)) showMaps();*/
-  log("showMaps ()");
+  if(! $("#map").length){
+    log("map not embedded");
+  }
+  else{
+    log("map ready");
 
-  var mapCenter = new google.maps.LatLng(48.13728, 16.35954);
-  var map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 12,
-    center: mapCenter,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    mapTypeControl: true,
-    mapTypeControlOptions: {
-      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR, //DROPDOWN_MENU
-      position: google.maps.ControlPosition.TOP_LEFT
-    },
-    zoomControl: true,
-    zoomControlOptions: {
-      style: google.maps.ZoomControlStyle.LARGE, //SMALL
-      position: google.maps.ControlPosition.LEFT_TOP
-    },
-    panControl: false,  // drag-move
-    scaleControl: false,
-    streetViewControl: false,
-    overviewMapControl: false
-  });
+    var mapCenter = new google.maps.LatLng(48.13728, 16.35954);
+    var map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 12,
+      center: mapCenter,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR, //DROPDOWN_MENU
+        position: google.maps.ControlPosition.TOP_LEFT
+      },
+      zoomControl: true,
+      zoomControlOptions: {
+        style: google.maps.ZoomControlStyle.LARGE, //SMALL
+        position: google.maps.ControlPosition.LEFT_TOP
+      },
+      panControl: false,  // drag-move
+      scaleControl: false,
+      streetViewControl: false,
+      overviewMapControl: false
+    });
 
-  var markerPos = new google.maps.LatLng(48.1787, 16.376);
-  var marker = new google.maps.Marker({
-    position: markerPos,
-    map: map,
-    label: "M",
-    title:"M&M Obst und Gemüse"
-  });
+    var markerPos = new google.maps.LatLng(48.1787, 16.376);
+    var marker = new google.maps.Marker({
+      position: markerPos,
+      map: map,
+      label: "M",
+      title:"M&M Obst und Gemüse"
+    });
+  };
 };
 
 function log(msg){
   if(typeof console != "undefined") console.log(msg);
-}
+};
 
 function site_ready(){
   log("site ready");
@@ -47,18 +51,31 @@ function site_ready(){
 
   $.address.change(function(event) {  // internal and external
     var id = event.path.split("/")[1];
-    log("address ("+id+")");
+    log("addressed "+id);
     $("#tab-"+id).tab('show');
   });
 
-  // prepare links
-  $("#tabs a").bind("click", function(e){
-    e.preventDefault();
-    var id = $(this).attr("href").split("#")[1];
-    log("click ("+id+")");
-    $.address.value(id);
-    return false;
-  });
+  // prepare tabs
+  if(window.no_ajax){
+    log("we won't load contents");
+  }
+  else if($(".tab-content").length){  // if there isn't a specific site
+    $(".tab-content").load("/");      // load "everything" now
+
+    $("#tab-menu a").each(function(i,a){
+      $(a).attr("href", "#"+$(a).attr("href"));
+    });
+    $("#tab-menu a").bind("click", function(e){
+      e.preventDefault();
+      var id = $(this).attr("href").split("#")[1];
+      log("clicked "+id);
+      $.address.value(id);
+      return false;
+    });
+  };
+
+  // activate if there is one active
+  //$("#tab-menu .active a").trigger("click");
 
   // prepare email links
   $("a").each(function(i,a){
@@ -86,14 +103,19 @@ function site_ready(){
   $("#email a").bind("click", function(e){
     e.preventDefault(); $("#email").trigger("submit"); return false;
   });
+  log("form binded");
 
   if(window.no_dataTable){
-    log("no dataTable");
+    log("datatable missing");
   }
-  else{
+  else if( $(".dataTable").length ){
+    // add templates to dom
+    ich.grabTemplates();
+    log("templates added");
+
     // prepare order form
     window.dataTable = $(".dataTable").dataTable( {
-      "sDom": "<'row-fluid'<'pull-left'f><'pull-left'p><'pull-right'ri>><'row-fluid't>",
+      "sDom": "<'row-fluid'<'pull-left'f><'pull-left'p><'pull-right'ri>><'row-fluid't><'pull-left'p>",
       "sPaginationType": "bootstrap",
       "bLengthChange": false,
       "bStateSave": true,
@@ -116,41 +138,87 @@ function site_ready(){
       "fnCreatedRow": function( row, data, index ) {
         $("td", row).first().prepend( $("<input>").attr("type", "checkbox") );
         // if the checkbox is clicked, the TableTools click is also triggered, so there is no binding necessary
+        var last = $("td", row).last();
+        last.html( ich.add_input({
+          "verpackung": last.text()
+        }) );
+        last.find("input").on("blur change", function(e){
+          check_item( last.parent()[0] );
+        });
       }
     } );
+    log("datatable created");
 
     window.dataTools = new TableTools(dataTable, {
       "sRowSelect": "multi",
       "sSelectedClass": "active",
-      "fnRowSelected": function(nodes){ order_item(nodes[0]); },
-      "fnRowDeselected": function(nodes){ order_item(nodes[0]); }
+      "fnRowSelected": function(nodes){ check_item(nodes[0]); },
+      "fnRowDeselected": function(nodes){ check_item(nodes[0]); }
     } );
-  };
+    log("datatable tools");
 
-  ich.grabTemplates();
-  ich.add_item({
-    "demo": true,
-    "artikel": "Ananas Extra Sweet",
-    "menge": 5,
-    "verpackung": "Stk"
-  }).appendTo("#order-items");
-  ich.add_item({
-    "demo": true,
-    "artikel": "Apfel Golden Delicious",
-    "menge": 8,
-    "verpackung": "kg"
-  }).appendTo("#order-items");
+    // add demo chart
+    ich.add_item({
+      "demo": true,
+      "artikel": "Ananas Extra Sweet",
+      "menge": 5,
+      "verpackung": "Stk"
+    }).appendTo("#order-items");
+    ich.add_item({
+      "demo": true,
+      "artikel": "Apfel Golden Delicious",
+      "menge": 8,
+      "verpackung": "kg"
+    }).appendTo("#order-items");
+
+    // bind buttons
+    $("#step1-btn").on("click", function(){
+      order_items();
+      $("#step1").hide();
+      $("#step2").show();
+    });
+    $("#step2-btn").on("click", function(){
+      alert("PDF");
+    });
+    $("#step2-back-btn").on("click", function(){
+      $("#step2").hide();
+      $("#step1").show();
+    });
+    log("buttons binded");
+
+
+  } else {
+    log("datatable not embedded");
+  };
+};
+
+function check_item(row){
+  var input = $("input:text", row);
+  if(window.dataTools.fnIsSelected(row)){
+    if(!input.val().length){
+      window.dataTools.fnDeselect(row);
+    }else{
+      $("input:checkbox", row).attr("checked", true);
+    };
+  }else{
+    if(input.val().length){
+      window.dataTools.fnSelect(row);
+    }else{
+      $("input:checkbox", row).attr("checked", false);
+    };
+  };
+};
+
+function order_items(){
+  rows = window.dataTools.fnGetSelected();
+  $(rows).each(function(i, row){
+    order_item(row);
+  });
 };
 
 function order_item(row){
-  if(window.dataTools.fnIsSelected(row)){
-    $("input:checkbox", row).attr("checked", true);
-  }
-  else{
-    $("input:checkbox", row).attr("checked", false);
-  };
-  var data = window.dataTable.fnGetData(row);
-  var head = window.dataTable.fnGetData($("thead tr").first()[0]);
+  var data = window.dataTable.fnGetData(row); // original data
+  //var head = window.dataTable.fnGetData($("thead tr").first()[0]); // is null
   var list = $("#order-items");
   var info = $("#order-info");
   var name = data[0].replace(/\s/g,"-").toLowerCase();
@@ -158,21 +226,23 @@ function order_item(row){
 
   if( item.length ) {
     item.remove();
-  }
-  else{
-    ich.add_item({
-      "id": "order-item-"+name,
-      "artikel": data[0],
-      "verpackung": data[2]
-    }).appendTo(list);
-  }
+  };
+  ich.add_item({
+    "id": "order-item-"+name,
+    "artikel": data[0],
+    "menge": $("input:text", row).val(),
+    "verpackung": $("button", row).text().trim()
+  }).appendTo(list);
 
   $(".demo", list).remove();
   info.removeClass("alert-error").text("In deiner Bestellung befinden sich "+list.children().length+" Artikel.");
+};
 
-  console.log(head);
-  console.log(data);
-  //var list = $("#order-item-"+row.id);
+function order_dropdown(element){
+  console.log(element);
+  var e = $(element);
+  var d = e.parents("ul").siblings("button").find("span");
+  d.text( e.text() );
 };
 
 /**

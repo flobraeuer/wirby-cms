@@ -20,24 +20,22 @@ require_once( $root."/routes.php" );
  */
 
 require_once( $libs."/".c::get("lib_mail") );
-require_once( $libs."/".c::get("lib_tmpl") );
+//require_once( $libs."/".c::get("lib_tmpl") );
 
 /**
  * Base logic
  */
 
 require_once( $base."/init.php" );
-require_once( $base."/tmpl.php" );
-require_once( $base."/pages.php" );
+require_once( $base."/admin.php" );
+require_once( $base."/content.php" );
 
-function wirby(){
-  route();
-  session();
-  actions();
-  $data = connect();
-  $html = render();
-
-  return $html;
-}
+function wirby() {
+  route();          // init: routing
+  database();       // init: connect database
+  session();        // admin: check admin session
+  admin();          // admin: render wirby
+  return render();  // content: render
+};
 
 ?>

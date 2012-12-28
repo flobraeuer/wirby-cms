@@ -6,11 +6,9 @@
 <?php if( $in_wirby ){ ?>
 
 <link type="text/css" rel="stylesheet" href="wirby/assets/style.css" />
+<script type="text/javascript" src="wirby/libs/ckeditor/ckeditor.js"></script>
 <?php } ?>
 
-
-<script type="text/javascript" src="wirby/libs/ckeditor3/ckeditor.js"></script>
-<script type="text/javascript" src="wirby/libs/ckeditor3/adapters/jquery.js"></script>
 
 <script type="text/javascript" src="<?php echo $assets_loader;?>"></script>
 

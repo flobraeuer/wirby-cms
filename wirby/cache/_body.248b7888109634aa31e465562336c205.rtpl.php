@@ -29,7 +29,9 @@
       <li><a href="#"><i class="icon-refresh"></i> <span id="wirby-editors">
         <?php if( $is_admin ){ ?>startet ...<?php }else{ ?>wartet ...<?php } ?></span></a></li>
       <li><a if="wirby-explain">
-        <?php if( $is_admin ){ ?> Bitte klicken Sie unterhalb einfach herum.
+        <?php if( $has_error ){ ?><?php echo $has_error;?>
+
+        <?php }elseif( $is_admin ){ ?> Bitte klicken Sie unterhalb einfach herum.
         <?php }else{ ?> Bitte melden Sie sich an:
         <?php } ?>
 
@@ -41,7 +43,7 @@
     <ul class="nav pull-right">
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          Hallo, <?php echo $is_admin["1"];?> <b class="caret"></b>
+          Hallo, <?php echo $is_admin['name'];?> <b class="caret"></b>
         </a>
         <ul class="dropdown-menu">
           <li><a href="#"><i class="icon-lock"></i> Passwort ändern</a></li>
@@ -64,11 +66,9 @@
 
   </div>
 </div>
-<?php if( $has_error ){ ?><div class="alert alert-error"><?php echo $has_error;?></div><?php } ?>
-
 
 <?php }else{ ?>
 
-  <a href="?edit=1"><i id="wirby" class="icon-wrench"></i></a>
+  <a href="/admin"><i id="wirby" class="icon-wrench"></i></a>
 <?php } ?>
 

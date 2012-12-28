@@ -8,12 +8,25 @@
  */
 
 body{
-  background: #F6F6F6 url("background-line.png") repeat;
+  background: #000 url("../files/background-04.jpg") no-repeat;
+  background-attachment: fixed;
   overflow-y: scroll;
   font-family: Open Sans, Arial, sans-serif;
 }
 
+#raster {
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: transparent;/* url("raster-60.png") repeat;*/
+}
+
 #container{
+  z-index: 1;
   position: relative;
 }
 
@@ -29,6 +42,12 @@ body{
   position: relative;
 }
 
+#content-border{
+  background: rgba(255,255,255,0.5);
+  border-radius: 7px;
+  padding: 4px;
+}
+
 #content{
   position: relative;
   background: #fff;
@@ -37,7 +56,8 @@ body{
   box-shadow: rgba(0,0,0,0.3) 0 1px 4px;
   /*border-color: #E4E4E4 #BEBEBD #BEBEBD #E4E4E4;*/
   min-height: 300px;
-  padding: 10px 20px;
+  padding: 10px 15px;
+  border-radius: 4px;
 }
 
 #logo{
@@ -60,25 +80,36 @@ body{
 
 #leap {
   position: absolute;
-  top: 30px;
+  top: 50px;
   right: 0;
-  font-size: 30px;
-  line-height: 30px;
-  padding: 5px 8px 7px 8px;
-  border: solid 3px #fff;
-  background: #D85E5E;
-  color: white;
+  padding: 4px;
+  border-radius: 7px;
+  background: rgba(255,255,255, 0.5);
 }
 
-.sub-leap {
+#leap p {
+  /*background-color: #D85E5E;
+  background: rgba(216, 94, 94, 1);
+  text-shadow: 1px -1px 1px rgb(255, 255, 255);*/
+  background: rgba(255,255,255,0.8);
+  color: rgb(198, 90, 17);
+  font-size: 35px;
+  line-height: 30px;
+  padding: 8px 13px 10px 13px;
+  margin: 0;
+  border-radius: 4px;
+}
+
+#leap a {
   display: block;
   position: absolute;
   bottom: -15px;
-  font-size: 12px;
+  right: 8px;
+  font-size: 13px;
   line-height: 12px;
-  color: #D85E5E;
+  color: #fff;
   background: none;
-  right: 0;
+  text-shadow: 0px 0px 2px #000;
 }
 
 ul.horizontal {
@@ -91,29 +122,39 @@ ul.horizontal li {
 
 #tab-menu {
   position: absolute;
-  bottom: 5px;
+  bottom: 10px;
   right: 0;
   text-align: right;
-  width: 60%;
+  width: 100%; /*60%; class for #content: span11 offset1*/
+  margin: 0; /* overwrites bootstrap:141*/
+}
+
+#tab-menu .left {
+  position: absolute;
+  left: 0;
+  bottom: 0;
 }
 
 #tab-menu a:hover, #tab-menu li.active a{
   color: white;
-  background: #D85E5E;
+  background: rgb(198, 90, 17);;
 }
 
 #tab-menu a {
   display: block;
   text-decoration: none;
-  padding: 5px 8px;
+  padding: 3px 8px 3px 8px;
   font-size: 110%;
+  border-radius: 3px;
+  color: rgb(216, 105, 18);
+  background: rgba(255,255,255,0.9);
 }
 
 @media (min-width: 980px) {
-  #tab-menu a { font-size: 120%; margin-left: 20px; }
+  #tab-menu a { font-size: 120%; margin: 0 10px; }
 }
 @media (max-width: 480px) {
-  #tab-menu { width: 50%; }
+  /*#tab-menu { width: 50%; }*/
 }
 @media (max-width: 480px) {
   #tab-menu a { font-size: 90%; }
@@ -200,7 +241,7 @@ table.dataTable tr.active td {
   background-color: #D85E5E !important;
   color: white;
 }
-table.dataTable input {
+table.dataTable input[type=checkbox] {
   margin: 0 10px 3px 0;
 }
 
@@ -208,7 +249,18 @@ table.dataTable input {
   opacity: 0.6;
 }
 
+#step1{
+
+}
+#step2{
+  display: none;
+}
+
 #map{
   height: 400px;
   width: 100%;
+}
+
+.center {
+  text-align: center;
 }

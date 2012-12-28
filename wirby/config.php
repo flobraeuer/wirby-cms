@@ -14,11 +14,16 @@ c::set("db.charset",  "utf8");
  * System
  */
 
+c::set("ajax",        false); // async if page variable is false
 c::set("debug",       false); // only print debug
 c::set("cache",       true);
 c::set("cache_path",  "wirby/cache");
 c::set("tmpls_path",  "pages"); // in project folder
-c::set("tmpls_main",  "_layout");
+c::set("tmpl_main",   "layout");
+c::set("tmpl_ajax",   "ajax"); // without a layout
+c::set("tmpl_head",   "head");
+c::set("tmpl_body",   "body");
+c::set("start_page",  "start"); // start page, set if ajax is false
 
 /**
  * Dependencies

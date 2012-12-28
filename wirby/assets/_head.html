@@ -3,20 +3,18 @@
 <link type="text/css" rel="stylesheet" href="wirby/assets/bootstrap.min.css" />
 <link type="text/css" rel="stylesheet" href="wirby/assets/datatable.bootstrap.css" />
 
-{if="$in_wirby"}
+<? if(w::in_a()) { ?>
 <link type="text/css" rel="stylesheet" href="wirby/assets/style.css" />
-{/if}
+<script type="text/javascript" src="wirby/libs/ckeditor/ckeditor.js"></script>
+<? } ?>
 
-<script type="text/javascript" src="wirby/libs/ckeditor3/ckeditor.js"></script>
-<script type="text/javascript" src="wirby/libs/ckeditor3/adapters/jquery.js"></script>
+<script type="text/javascript" src="<?= w::c('assets_loader') ?>"></script>
 
-<script type="text/javascript" src="{$assets_loader}"></script>
-
-{if="$google_analytics"}
+<? if(w::c("google_analytics")) { ?>
   <script type="text/javascript">
     var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', '{$google_analytics}']);
-    _gaq.push(['_setDomainName', '{$domain}']);
+    _gaq.push(['_setAccount', '<?= w::c("google_analytics") ?>']);
+    _gaq.push(['_setDomainName', '<?= w::c("domain") ?>']);
     _gaq.push(['_setAllowLinker', true]);
     _gaq.push(['_trackPageview']);
     (function() {
@@ -25,15 +23,15 @@
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
-{/if}
+<? } ?>
 
-{if="$google_plus"}
+<? if(w::c("google_plus")) { ?>
   <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
     {lang: 'de'}
   </script>
-{/if}
+<? } ?>
 
-{if="$microsoft_verification"}
-  <meta name="msvalidate.01" content="3703F5612A984D5F37D1B6A043A76C59" />
-{/if}
+<? if(w::c("microsoft_verification")) { ?>
+  <meta name="msvalidate.01" content='<?= w::c("microsoft_verification") ?>' />
+<? } ?>
 
