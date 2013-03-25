@@ -10,6 +10,9 @@ c::set("db.user",     "wirby");
 c::set("db.password", "wirby");
 c::set("db.charset",  "utf8");
 
+c::set("languages", array("de", "en", "es", "fr", "it") );
+c::set("language", "de"); // default used in toolkit:2148
+
 /**
  * System
  */
@@ -34,6 +37,7 @@ c::set("lib_toolkit",   "kirby-toolkit/kirby.php");
 c::set("lib_tmpl",      "raintpl/inc/rain.tpl.class.php");
 c::set("lib_mail",      "phpmailer/class.phpmailer.php");
 c::set("lib_db",        "meekrodb/db.class.php");
+c::set("lib_uploader",  "fileuploader/server/php/php.php");
 c::set("js_lib_headjs", "headjs/dist/head.load.min.js");
 c::set("js_lib_editor", "ckeditor3/ckeditor.js");
 c::set("js_lib_tmpl",   "icanhaz/ICanHaz.min.js");
@@ -42,27 +46,28 @@ c::set("js_lib_tmpl",   "icanhaz/ICanHaz.min.js");
  * Assets
  */
 
-c::set("assets_loader",       "wirby/libs/".c::get("js_lib_headjs")); // library async loader
+c::set("assets_loader",       "/wirby/libs/".c::get("js_lib_headjs")); // library async loader
 c::set("assets_callback",     "site_ready"); // afterwards execute this js-callback-function
 c::set("assets_mapscallback", "maps_ready"); // after loading maps execute this one
 
 c::set("assets_js", array( // js libraries used always
-  "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js",
+  "http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js",
   "http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=".c::get("assets_mapscallback"),
   "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js",
-  "wirby/libs/jquery.address.js",
-  "wirby/libs/".c::get("js_lib_tmpl"),
-  "wirby/assets/bootstrap.min.js",
-  "wirby/assets/datatable.bootstrap.js",
-  "wirby/assets/datatable.tabletools.min.js"
+  "/wirby/libs/jquery-address/jquery.address-1.6.min.js",
+  "/wirby/libs/".c::get("js_lib_tmpl"),
+  "/wirby/assets/bootstrap.min.js",
+  "/wirby/assets/datatable.bootstrap.js",
+  "/wirby/assets/datatable.tabletools.min.js"
 ));
 
 c::set("assets_admin", array( // js libraries used when logged in
-  "wirby/libs/ckeditor/ckeditor.js",
-  "wirby/libs/jquery.jeditable.js",
-  //"wirby/libs/".c::get("js_lib_editor"),
-  //"wirby/libs/ckeditor3/adapters/jquery.js",
-  "wirby/assets/script.js"
+  "/wirby/libs/ckeditor/ckeditor.js",
+  "/wirby/libs/fileuploader/client/js/jquery-plugin.js",
+  //"/wirby/libs/jquery.jeditable.js",
+  //"/wirby/libs/".c::get("js_lib_editor"),
+  //"/wirby/libs/ckeditor3/adapters/jquery.js",
+  "/wirby/assets/script.js"
 ));
 
 /**

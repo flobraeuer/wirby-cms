@@ -20,6 +20,7 @@ require_once( $root."/routes.php" );
  */
 
 require_once( $libs."/".c::get("lib_mail") );
+require_once( $libs."/".c::get("lib_uploader") );
 //require_once( $libs."/".c::get("lib_tmpl") );
 
 /**
@@ -31,7 +32,9 @@ require_once( $base."/admin.php" );
 require_once( $base."/content.php" );
 
 function wirby() {
-  route();          // init: routing
+  logr("Wirby loaded");
+  language();       // init: language from server
+  route();          // init: routing with localization
   database();       // init: connect database
   session();        // admin: check admin session
   admin();          // admin: render wirby

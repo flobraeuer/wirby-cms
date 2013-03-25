@@ -4,11 +4,11 @@
 
   error_reporting(/*E_ALL*/E_STRICT);
   //ini_set('display_errors', TRUE);
-
+  
   /**
    ** Tracking
    **/
-
+  
   function track($note=""){
     $type = "mail";
     $date = date("Y-m-d H:i:s");
@@ -20,28 +20,28 @@
     }catch(Exception $e){ return false; }
     return true;
   };
-
+  
   // Database
   require_once "meekrodb/meekrodb.1.6.class.php";
   DB::$user = "cust_knotzer";
   DB::$dbName = "cust_knotzer";
   DB::$password = "knotzer_geheim";
   DB::$encoding = "utf8";
-
+  
   /**
    ** Email
    **/
-
+  
   $email = $_POST["email"];
-
+  
   if( isset($email) ){
     if( strlen($email["name"])>2 && strlen($email["address"])>5 && strlen($email["message"])>15 ){
       if( preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,6}$/', $email["address"]) ){
-
+      
         try {
           require_once('mailer/class.phpmailer.php');
           $mail = new PHPMailer();
-
+        
           $email["to"] = "mknotzer@me.com";
           $email["body"] = "
             <html>
@@ -59,7 +59,7 @@
             </body>
             </html>
           ";
-
+        
           $mail->AddAddress($email["to"], "Michael");
           $mail->SetFrom("hallo@webarchitects.at", "web architects");
           $mail->AddReplyTo($email["address"], $email["name"]);
@@ -78,21 +78,21 @@
 
           $send = $mail->Send();
           track($email["address"].": ".substr($email["message"],0,200)." ...");
-
+      
           $output = array(
             "status" => ($send ? "success" : "error"),
             "from" => $email["address"],
             "to" => $email["to"],
             "msg" => $email["body"]
           );
-
+        
         } catch (Exception $e) { json_encode( array("status" => "error", "error" => ($e->getMessage()) ) ); };
       } else $output = array( "status" => "error", "error" => "Email nicht gültig" );
     } else $output = array( "status" => "error", "error" => "Bitte alles ausfüllen" );
   } else $output = array( "status" => "error", "error" => "Bitte über das Formular verschicken" );
-
+  
   echo json_encode($output);
-
+  
   /* Standard Mail
   $email["to"] = "florian@webarchitects.at";
   $email["from"] = "knotzer@webarchitects.at";

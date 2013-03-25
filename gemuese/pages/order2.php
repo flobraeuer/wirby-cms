@@ -1,6 +1,5 @@
-<?php if(!class_exists('raintpl')){exit;}?><div class="row-fluid" id="step2">
-<?php if( $is_admin ){ ?><?php }else{ ?><form class="form" method="post"><?php } ?>
-
+<div class="row-fluid" id="step2">
+<? if(! w::is_a()){ ?><form class="form" method="post"><? } ?>
 
   <div class="span5">
     <h2>Kundendaten</h2>
@@ -29,7 +28,6 @@
     <div class="well">
       <p id="order-info" class="alert alert-error">Sie haben unterhalb noch keine Produkte ausgewählt. Ihre Bestellung könnte so aussehen:</p>
 
-      
       <script id="add_item" type="text/html">
         <li {{#demo}}class="demo"{{/demo}} {{#id}}id="{{id}}"{{/id}}>
           <div class="input-append pull-right">
@@ -40,6 +38,7 @@
           <input type="text" name="artikel" value="{{artikel}}" class="input-unstyled input-medium" disabled>
         </li>
       </script>
+
       <script id="add_input" type="text/html">
         <div class="input-append">
           <input class="input-minii" type="text">
@@ -49,15 +48,18 @@
               <i class="caret"></i>
             </button>
             <ul class="dropdown-menu">
-              <li><a href="#" onclick="order_dropdown(this); return false;">kg</a></li>
+              <li><a href="#" onclick="order_dropdown(this); return false;">Kg</a></li>
               <li><a href="#" onclick="order_dropdown(this); return false;">Stk</a></li>
               <li><a href="#" onclick="order_dropdown(this); return false;">Tassen</a></li>
               <li><a href="#" onclick="order_dropdown(this); return false;">Kisten</a></li>
+              <li><a href="#" onclick="order_dropdown(this); return false;">Bund</a></li>
+              <li><a href="#" onclick="order_dropdown(this); return false;">Kolli</a></li>
+              <li><a href="#" onclick="order_dropdown(this); return false;">Säcke</a></li>
+              <li><a href="#" onclick="order_dropdown(this); return false;">Kübel</a></li>
             </ul>
           </div>
         </div>
       </script>
-      
 
       <ul id="order-items" class="unstyled">
 
@@ -70,6 +72,5 @@
     <div id="step2-btn" class="btn btn-large btn-danger">Bestellung verbindlich abschicken</div>
   </div>
 
-<?php if( $is_admin ){ ?><?php }else{ ?></form><?php } ?>
-
+<? if(! w::is_a()){ ?></form><? } ?>
 </div>

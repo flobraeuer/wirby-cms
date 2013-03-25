@@ -1,40 +1,94 @@
-var wirbies = [];
+window.wirby_editors = []; // editors
+window.wirby_changes = []; // changed editors' ids
 
 function wirby_ready(){
   log("CMS: started");
 
   // Editors
-  wirbies = $("[data-wirby]");
-  $("#wirby-editors").text(wirbies.length+" Editoren");
-  log("CMS: "+wirbies.length+" Editors found");
+  wirby_editors = $("[data-wirby]").not("a");
+  $("#wirby-editors").text(wirby_editors.length+" Editoren");
+  log("CMS: "+wirby_editors.length+" Editors found");
 
   // Init CKEditor
-  wirbies.each(function(i, elm){
-    $(elm).attr("contenteditable", "true");
-    var ckeditor = {
-      //removePlugins:  "colorbutton,find,flash,font," +
-      //                "forms,iframe,image,newpage,removeformat," +
-      //                "smiley,specialchar,stylescombo,templates",
+  wirby_editors.each(function(i, elm){
+    wirby_make( elm );
+  });
+
+  //wirby_editors.on("click",function(e){
+  //  wirby_changed( $(this).attr("id") );
+  //});
+};
+
+var wirby_count = 0;
+function wirby_changed(id){
+  if($.inArray(id, wirby_changes) == -1){
+    wirby_changes.push(id);
+    wirby_count++;
+    var s = wirby_count>1 ? "Änderungen" : "Änderung";
+    var a = $("<a>")
+            .attr({"href": "#", "title": "Alle Inhalte abschicken"})
+            .text(wirby_count+" "+s+" speichern");
+    $("#wirby-editors").html(a);
+    $("#wirby-editors a").unbind("click").bind("click", function(e){ e.preventDefault(); wirby_save(); });
+  };
+};
+
+function wirby_save(){
+  var contents = {};
+  $.each(wirby_changes, function(i, id){
+    var content = null;
+    if( content = $("#"+id).data("img") ) console.log("CMS: Image "+content);
+    else content = CKEDITOR.instances[id].getData();
+    contents[id] = content;
+  });
+  $.ajax({
+    url: "/",
+    type: "post",
+    data: { "type": "update", "contents": contents },
+    dataType: "json",
+    success: function(data, text, xhr){
+      log(data);
+      var txt = data["updated"]+" geändert";
+      if(data["inserted"]) txt += " "+data["inserted"]+" hinzugefügt";
+      $("#wirby-editors").html( txt );
+      wirby_changes = [];
+      wirby_count = 0;
+    },
+    error: function(xhr, text, error){
+      log(text+":");
+      log(error);
+    }
+  });
+};
+
+function wirby_make(editor){
+  $editor = $(editor); // jquery object, the other one is pure html
+  var id = $editor.attr("id");
+  if($editor.is("a")){
+    // TODO: editable menu
+  }
+  else if($editor.is("img")){
+    wirby_make_img($editor);
+  }
+  else{
+    // http://docs.ckeditor.com/#!/guide/dev_toolbar
+    var config = {
       toolbarGroups: [
         { name: "undo", groups: [ "undo", "cleanup" ] },
-        { name: "basicstyles", groups: [ "basicstyles", "links" ] },
-        //{ name: "editing",     groups: [ "find", "selection", "spellchecker" ] },
-        //{ name: "insert" },
-        //{ name: "forms" },
-        //{ name: "others" },
-        //{ name: "document",    groups: [ "mode", "document", "doctools" ] },
-        //{ name: "colors" }
-        //{ name: "styles" }
-        //{ name: "about" }
-      ]
+        { name: "basicstyles", groups: [ "basicstyles", "links" ] }
+      ],
+      on: {
+        "instanceReady": function(){ console.log("CMS: editor ready"); },
+        "key": function(){ wirby_changed( id ); }
+      }
     };
-    if(! $(elm).is("h1,h2,h3,h4,h5,h6,span,a")){
-      ckeditor.toolbarGroups.push(
-        { name: "clipboard",   groups: [ "clipboard", "undo" ] }
+    if(! $editor.is("h1,h2,h3,h4,h5,h6,span")){
+      config.toolbarGroups.push(
+        { name: "clipboard" }
       );
     }
-    if($(elm).is("div")){
-      ckeditor.toolbarGroups.push(
+    if($editor.is("div")){
+      config.toolbarGroups.push(
         "/",
         { name: "align" },
         { name: "paragraph",   groups: [ "list", "indent" ] },
@@ -43,122 +97,96 @@ function wirby_ready(){
       );
     };
 
-    CKEDITOR.inline(elm, ckeditor);
+    $editor.attr("contenteditable", "true");
+    CKEDITOR.inline(editor, config);
+  };
 
-  //   var info = $(el).attr("data-wirby").split(" ");
-  //   $(el).data("wirby", {"type": info[0], "id": info[1]})
-  //        .addClass("wirby-"+info[0])
-  //        .bind("click", function(){ makeEditor(this); });
-  });
+  function wirby_make_img($editor){
+    //var width = $editor.width();
+    //var height = $editor.height();
 
-  // Bind Form Event
-  // $("form#wirby-form").bind("submit", function(e){
-  //   if(!confirm("Sollen die Inhalte nun gespeichert werden?")) e.preventDefault();
-  // });
-};
-
-function saveEditors(){
-  var areas = $(".wirby-multi textarea");
-  if(areas.length){
-    areas.each(function(i){
-      $(this).val( $.trim( $(this).val().replace(/\n/g, "<br />") ) );
-      if ($(this).val().match(/\w+(\(a\))\w+/g)){
-        //var link = "<a href="#" target="_self" "title"="Emailprogramm öffnen">" //var link = $("<a>").attr({"href":"#", "target":"_self", "title":"Emailprogramm öffnen"});
-        //         + $(this).val().match(/(\S+\(a\)\S+)/)[0] + "</a>";
-        $(this).val( $(this).val().replace(/\S+\(a\)\S+/g, link) );
-      };
+    var $wrapper = $editor.parent(".img");    // it is yet wrapped
+    if(!$wrapper.length){
+      console.log("not wrapped");
+      $wrapper = $("<div>").addClass("img");  // wrap it if not
+      $editor.wrap($wrapper);
+    };
+    //$wrapper.css({"height":height, "width":width});
+    var $uploader = $("<div>").addClass("uploader");
+    $uploader.appendTo($wrapper).fineUploader({ // https://github.com/valums/file-uploader/blob/master/readme.md#options-of-both-fineuploader--fineuploaderbasic
+      debug: true,
+      multiple: false,
+      request: { endpoint: '/?type=upload' },
+      dragAndDrop: {
+        hideDropzones: false,
+        disableDefaultDropzone: true,
+        extraDropzones: [$wrapper.get()[0], $uploader.get()[0]]
+      },
+      text: {
+        uploadButton: 'Hierher ziehen oder klicken',
+        cancelButton: 'X',
+        retryButton: 'Test',
+        failUpload: 'Fehler',
+        dragZone: 'Hierher ziehen',
+        dropProcessing: 'Losgelassen',
+        formatProgress: "{percent}% von {total_size}",
+        waitingForResponse: "Bitte warten"
+      }
     });
+    $uploader.on("complete", function(e, id, file, json){
+      $editor.attr("src", "/gemuese/files/"+file);
+      $editor.data("img", file);
+      wirby_changed( $editor.attr("id") );
+    });
+    console.log($wrapper);
+
+    // var $form = $("<input>").attr({"type":"file"});
+    // $editor.css({"height":height, "width":width});
+    // $form.css({"height":height, "width":width});
+    // console.log($form);
+    // $form.attr({"id": info.id, "name": images+"["+info.id+"]"});
+
+    // var dropZone = $("#area-avatar");
+    // var dropNear = function(){ dropZone.addClass("drag"); };
+    // var dropOver = function(){ dropZone.addClass("drop"); };
+    // var dropOut  = function(){ dropZone.removeClass("drag drop"); };
+    // var avatarChoosen = function(event, files, index, xhr, handler, callBack){
+    //   formNote(l.note.thanks, l.note.success.profile_avatar, "#form-profile-avatar", "success");
+    //   $("#profile-avatar-label").text(l.account.avatarLoading);
+    //   callBack(); // start uploading
+    // };
+    // var avatarLoading = function(e, files, index, xhr, handler){
+    //   var percent = parseInt(e.loaded / e.total * 100, 10);
+    //   log("snapAuth: avatarProcess", percent+"%");
+    //   if(percent>=99) $("#profile-avatar-label").text(l.account.avatarProcess);
+    //   else $("#profile-avatar-label").text(l.account.avatarLoading+" ("+percent+"%)");
+    // };
+    // var avatarLoaded = function(e, files, index, xhr, handler){
+    //   log("snapAuth: avatarProcess", "finish");
+    //   var text = xhr.responseText? xhr.responseText : (xhr.contents() && xhr.contents().text());
+    //   var json = $.parseJSON( text );
+    //   var avatar = (json&&json.user) ? json.user.avatar_urls.thumb : false;
+    //   if(!avatar) formNote(l.note.error, l.note.profile_avatar, "#form-profile-avatar");
+    //   else {
+    //     that.user.avatar_urls = {"thumb": avatar};
+    //     $("#profile-avatar-thumb").attr('src', avatar);
+    //     $("#profile-avatar-label").text(l.account.avatarLoaded);
+    //     dropOut();
+    //   };
+    //   window.setTimeout(function(){
+    //     $("#profile-avatar-label").text(l.account.avatarChoose);
+    //   }, 2000);
+    // };
+    //
+    // // IE BUG
+    // // Object doesn't support this property or method" in snap2.js, zeile 185, zeichen 127
+    // $("#form-profile-avatar").fileUpload({
+    //   "dragDropSupport": true,    "dropZone": dropZone,
+    //   "url": conf.urlUserAvatar,  "method": "POST",
+    //   "name": "user[avatar]",     "multipart": true,
+    //   "onProgress": avatarLoading,"onLoad": avatarLoaded,
+    //   "initUpload": avatarChoosen,"onDocumentDragOver": dropNear,
+    //   "onDragOver": dropOver, "onDragEnter": dropOver, "onDrop": dropOver
+    // });
   };
-  log("save");
-  $("form#wirby-form").submit();
-};
-
-var count = 0;
-function countEditors(){
-  count++;
-  var s = count>1 ? "Änderungen" : "Änderung";
-  var a = $("<a>")
-          .attr({"href": "#", "title": "Alle Inhalte abschicken"})
-          .text(count+" "+s+" speichern");
-  $("#wirby-editors").html(a);
-  $("#wirby-editors a").unbind("click").bind("click", function(e){ e.preventDefault(); saveEditors(); });
-};
-
-function makeEditor(editor){
-  $(editor).unbind("click").css({"position":"relative"});
-  var name = "contents";
-  var html = $(editor).html();
-  var info = $(editor).data("wirby"); log(info);
-
-  // Take Style
-  var width = $(editor).width();
-  var height = $(editor).height()-3;
-  //if(info.id.match(/kontakt-contact/)) height=55;
-
-  // One Line
-  if ($.inArray(info.type, ["head","button","single"])>-1){
-    var form = $("<input>").attr("type","text").val(html);
-  }
-  // Multi Line
-  else if (info.type == "multi"){
-    html = $.trim( html.replace(/<br>|<br \/>/ig, "\n") );
-    html = html.replace(/<a .+>(.+)@(.+)<\/a>/ig, "$1(a)$2");
-    var form = $("<textarea>").val(html);
-    form.css({"height": height});
-
-  }
-  // Editor
-  else if (info.type == "editor"){
-    var form = $("<textarea>").val(html);
-    form.css({"height": height, "width": width});
-  }
-  // Image Upload
-  else if (info.type == "image"){
-    name = "images"; // for php: instead of "contents"
-    var form = $("<input>").attr({"type":"file"});
-    $(editor).css({"height":height, "width":width});
-    $(form).css({"height":height, "width":width});
-  };
-
-  form.attr({"id": info.id, "name": name+"["+info.id+"]"})
-
-  $(editor).html(form);
-  countEditors();
-
-  if(info.type == "editor") wysiwyg(info.id);
-};
-
-function wysiwyg(id, less){
-  var form = $("#"+id);
-  var tiny = form.parent().hasClass("tiny");
-
-
-  //form.ckeditor(function(){
-  //  form.parent().removeClass("timeline");
-  //  log("CKeditor loaded for "+form.attr("id"));
-  //},
-
-  //CKEDITOR.replace(id, {
-  //  language : "de",
-  //  uiColor : "#eee",
-  //  height: "400",
-  //  width: "700",
-
-  //  // removeDialogTabs = "flash:advanced;image:Link",
-  //  resize_dir : "vertical",
-  //  bodyClass : (form.parent().attr("class") || ""),
-  //  contentsCss: "/gemuese/assets/style.css",
-  //  enterMode : CKEDITOR.ENTER_BR,
-
-  //  format_tags : "h2;p",
-
-  //  toolbar : (less ? "tiny" : "small"),
-  //  toolbar_small : [
-  //    ["Undo","Redo","Copy","Paste","RemoveFormat","-","Link","Unlink","-","Source"],
-  //    ["Bold","Italic","-","NumberedList","BulletedList","Outdent","Indent","CreateDiv","-","Format"]
-  //  ],
-  //  toolbar_tiny : [
-  //    ["Undo","Redo","-","Link","Unlink","-","Source"]
-  //  ]
-  //});
 };

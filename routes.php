@@ -8,19 +8,32 @@ c::set("domains", array(
   "gemuese.test" => "gemuese"
 ));
 
-c::set("pages", array(
-  "gemuese" => array(
-    "ueber-celik" => "about",
-    "aktuelle-angebote" => "offer",
+/**
+ * Routen
+ */
+
+c::set("routes", array(
+
+  /* Gemüsehändler */
+
+  "gemuese.de" => array(
+    "aktuelle-angebote" => "news",
     "online-bestellung" => "order",
-    "kontakt" => "where"
+    "obst-korb"         => "fruits",
+    "ueber-celik"       => "about",
+    "kontakt"           => "contact",
+    "impressum"         => "imprint"
   ),
+
   "gemuese.en" => array(
-    "about-celik" => "about",
-    "actual-offers" => "offer",
-    "online-order" => "order",
-    "contact" => "where"
+    "actual-offers"     => "news",
+    "online-order"      => "order",
+    "fruits-basket"     => "fruits",
+    "about-celik"       => "about",
+    "contact"           => "contact",
+    "imprint"           => "imprint"
   )
+
 ));
 
 ?>

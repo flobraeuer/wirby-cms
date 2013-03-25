@@ -19,3 +19,9 @@
 [submodule ".gitmodule/icanhaz"]
 	path = .gitmodule/icanhaz
 	url = git://github.com/andyet/ICanHaz.js
+[submodule ".gitmodule/fileuploader"]
+	path = .gitmodule/fileuploader
+	url = git://github.com/valums/file-uploader.git
+[submodule ".gitmodule/jquery-address"]
+	path = .gitmodule/jquery-address
+	url = git://github.com/asual/jquery-address.git

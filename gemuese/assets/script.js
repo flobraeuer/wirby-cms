@@ -45,7 +45,6 @@ function site_ready(){
 
   // init jQuery.address for tabs
   $.address.history(true)             // browser
-           .crawlable(true)           // "#!" google
            .strict(true)              // "/"
            .tracker($.noop);          // do it the own way
 
@@ -60,7 +59,7 @@ function site_ready(){
     log("we won't load contents");
   }
   else if($(".tab-content").length){  // if there isn't a specific site
-    $(".tab-content").load("/");      // load "everything" now
+    $(".tab-content").load("/", {"type":"content"}); // load "everything" now
 
     $("#tab-menu a").each(function(i,a){
       $(a).attr("href", "#"+$(a).attr("href"));
@@ -106,21 +105,23 @@ function site_ready(){
   log("form binded");
 
   if(window.no_dataTable){
-    log("datatable missing");
+    log("datatable not rendered");
   }
-  else if( $(".dataTable").length ){
+  else if( $(".dataTable table").length ){
     // add templates to dom
     ich.grabTemplates();
     log("templates added");
 
     // prepare order form
-    window.dataTable = $(".dataTable").dataTable( {
+    window.dataTable = $(".dataTable table").dataTable( {
       "sDom": "<'row-fluid'<'pull-left'f><'pull-left'p><'pull-right'ri>><'row-fluid't><'pull-left'p>",
-      "sPaginationType": "bootstrap",
-      "bLengthChange": false,
-      "bStateSave": true,
+      "bStateSave": false,
       "bAutoWidth": true,
       "bSort": false,
+      "bPaginate": true,
+      "sPaginationType": "bootstrap",
+      "bLengthChange": false,
+      "iDisplayLength": 60,
       "oLanguage": {
         "sSearch": "Nach _INPUT_ suchen",
         "oPaginate": {
@@ -135,6 +136,7 @@ function site_ready(){
         "sEmptyTable": "Wir aktualisieren gerade unser Produktsortiment. Bitte kontaktieren Sie uns telefonisch.",
         "sZeroRecords": "Diesen Artikel führen wir leider nicht. Ändere gegebenenfalls den Suchfilter oberhalb."
       },
+      "aoColumns": null,
       "fnCreatedRow": function( row, data, index ) {
         $("td", row).first().prepend( $("<input>").attr("type", "checkbox") );
         // if the checkbox is clicked, the TableTools click is also triggered, so there is no binding necessary
@@ -221,7 +223,7 @@ function order_item(row){
   //var head = window.dataTable.fnGetData($("thead tr").first()[0]); // is null
   var list = $("#order-items");
   var info = $("#order-info");
-  var name = data[0].replace(/\s/g,"-").toLowerCase();
+  var name = unescape(data[0].replace(/[\s\W]/g,"-").toLowerCase());
   var item = $("#order-item-"+name);
 
   if( item.length ) {
