@@ -62,5 +62,5 @@
 </div>
 
 <? } else { ?>
-  <a href="/admin"><i id="wirby" class="icon-wrench"></i></a>
+  <a class="wirby" href="/admin"><i class="icon-wrench icon-white"></i></a>
 <? } ?>

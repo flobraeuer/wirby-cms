@@ -1,41 +1,53 @@
 <?php
 
-class wirby {
+date_default_timezone_set("Europe/Vienna");
+if($debug = true){
+  error_reporting(E_STRICT); // E_ALL
+  ini_set("display_errors", true);
+}
+c::set("has_error", false); // error message
+c::set("has_info", false);  // info msg
+c::set("in_wirby", false);  // we opened the CMS
+c::set("is_admin", false);  // we logged in sucessfully
+s::start();
+
+class Wirby {
+
+  function __construct() {
+    self::log("Wirby loaded");
+    $this->language();       // init: language from server
+    $this->route();          // init: routing with localization
+    $this->database();       // init: connect database
+    $this->session();        // admin: check admin session
+    $this->admin();          // admin: render wirby
+    return $this->render();  // content: render
+  }
 
   /*****************************************************************************
    * System
    */
 
-  function init(){
-    date_default_timezone_set("Europe/Vienna");
-    error_reporting(E_STRICT); // E_ALL
-    ini_set("display_errors", true);
-    c::set("has_error", false); // error message
-    c::set("has_info", false);  // info msg
-    c::set("in_wirby", false);  // we opened the CMS
-    c::set("is_admin", false);  // we logged in sucessfully
-    s::start();
-  }
-
-  function test($debug){
+  static function test($debug){
     echo "Wirby logger exits: \n";
     print_r( $debug ? $debug : new Time() );
     exit;
   }
 
-  function logr(){
-    // https://docs.google.com/spreadsheet/ccc?key=0AqmhzrmZU8kqdFJnd1NPSzY2NzFhUWFvamJkMmYwdUE#gid=0
-    $messages = '?logID=agtzfmxvZy1kcml2ZXILCxIDTG9nGLmCBww';
-    foreach (func_get_args() as $a) $messages .= ("&m%5B%5D=".urlencode($a));
-    $fp = fsockopen("log-drive.appspot.com", 80);
-    $h = "GET /logd$messages HTTP/1.1\r\n";
-    $h .= "Host: log-drive.appspot.com\r\n";
-    $h.= "Connection: Close\r\n\r\n";
-    fwrite($fp, $h);
-    fclose($fp);
+  static function log(){
+    if($debug == true){
+      // https://docs.google.com/spreadsheet/ccc?key=0AqmhzrmZU8kqdFJnd1NPSzY2NzFhUWFvamJkMmYwdUE#gid=0
+      $messages = '?logID=agtzfmxvZy1kcml2ZXILCxIDTG9nGLmCBww';
+      foreach (func_get_args() as $a) $messages .= ("&m%5B%5D=".urlencode($a));
+      $fp = fsockopen("log-drive.appspot.com", 80);
+      $h = "GET /logd$messages HTTP/1.1\r\n";
+      $h .= "Host: log-drive.appspot.com\r\n";
+      $h.= "Connection: Close\r\n\r\n";
+      fwrite($fp, $h);
+      fclose($fp);
+    }
   }
 
-  function alternative($array, $key, $array2, $key2){
+  static function alternative($array, $key, $array2, $key2){
     if(! $array) $array = $array2; // fallback if even the main array does not exist
     if(! $array2) $array2 = $array; // alternative in another array, or in the same one
     if(! $key2) $key2 = $key; // just use the same as within the main array
@@ -48,9 +60,10 @@ class wirby {
 
   function language(){
     //s::remove("language");
-    $lang = r::get("lang", l::current()); // if it's set try it, otherwise use default
+    $lang = r::get("lang", c::get("language")); // l::current() ... if it's set try it, otherwise use default
     l::change($lang); // checks if it's allowed and set it
     // check it with l::current()
+    w::log("Language", $lang);
   }
 
   /**
@@ -100,9 +113,10 @@ class wirby {
 
     // get internationalized page synonym (key)
     $page_default = c::get("ajax") ? false : c::get("start_page");  // ajax: no startpage, but all pages
-    $page = r::get("page", $page_default); // alternative = no-ajax: startpage
+    $page = r::get("page"); // alternative = no-ajax: startpage
+    if(!$page) $page = $page_default;
 
-    $route = alternative($i18n, $page, $fall, $page); // look for the given page
+    $route = self::alternative($i18n, $page, $fall, $page); // look for the given page
     if($route) $page = $route; // if it's found, use it internally
 
     c::set("page", $page); // eveything else is done in content
@@ -141,6 +155,7 @@ class wirby {
 
   function admin(){
     $request = r::get("type", "");
+    $lang = l::current(); if(!$lang) $lang = c::get("language");
 
     if( $request == "update" && r::is_post() ){
       if( $contents = r::get("contents",false) ){
@@ -150,12 +165,12 @@ class wirby {
         $inserted = 0;
         $changed = array();
         foreach($contents as $title => $content){
-          $existing = db::row( "contents_".c::get("site"), array("id"), array("title" => $title) );
+          $existing = db::row( "contents_".c::get("site"), array("id"), array("title" => $title, "lang" => $lang) );
           if($existing){
-            $update = db::update( "contents_".c::get("site"), array("content" => $content), array("id" => $existing["id"]) );
+            $update = db::update( "contents_".c::get("site"), array("content" => $content), array("id" => $existing["id"], "lang" => $lang) );
             $updated ++;
           }else{
-            $insert = db::insert( "contents_".c::get("site"), array("content" => $content, "title" => $title) );
+            $insert = db::insert( "contents_".c::get("site"), array("content" => $content, "title" => $title, "lang" => $lang) );
             $inserted ++;
           }
           $changed[] = $title;
@@ -215,10 +230,11 @@ class wirby {
      * Array
      */
 
-    $contents_raw = db::select( "contents_".c::get("site"), array("title", "content") );
+    $contents_raw = db::select( "contents_".c::get("site"), array("title", "content", "lang") );
     $contents = array();
     foreach ($contents_raw as $content) { // map the result
-      $contents[$content["title"]] = $content["content"];
+      $lang = $content["lang"]; if(!$lang) $lang = c::get("language"); // default language
+      $contents[$content["title"]][$lang] = $content["content"];
     };
     c::set("content", $contents); // push it to the c class
 
@@ -267,6 +283,7 @@ class wirby {
   }
   // return site/project name
   static function site(){ return c::get("site"); }
+  static function page(){ return c::get("page"); }
 
   // check url against a certain/current page
   static function is($page, $class="active"){
@@ -280,7 +297,9 @@ class wirby {
   // complete an url with language key (if it's not the default lang)
   static function to($page){
     $to = array_search($page, c::get("routes_i18n"));
-    return $to ? $to : $page;
+    $to = $to ? $to : $page; // maybe this page doesn't exist
+    $lang = l::current(); // also here it's necessary to avoid 2 urls for 1 content
+    return $lang == c::get("language") ? "/".$to : "/".$lang."/".$to;
   }
 
   // change language (find current page in the other lang)
@@ -330,9 +349,10 @@ class wirby {
 
   // get the content of a db entry
   static function get($content, $alt, $pre){
-    $array = c::get("content");
-    $text = $array["$content"];
-    return $text ? ($pre ? $pre : "").$text : ($alt ? $alt : $content);
+    $contents = c::get("content");
+    $matching = $contents["$content"][l::current()];  // prefered lang
+    if(!$matching) $matching = $contents["$content"][c::get("language")]; // default lang
+    return $matching ? ($pre ? $pre : "").$matching : ($alt ? $alt : $content);
   }
 
   // elements with end tags
@@ -345,9 +365,10 @@ class wirby {
   static function img_tag($content, $w, $h, $class, $attrs=""){
     $class = $class ? " class='$class'" : "";
     $attrs = $attrs . (c::get("is_admin") ? " data-wirby='$content'" : "");
-    $attrs = $attrs . ($w ? " width='$w'" : "") . ($h ? " height='$h'" : ""); // style='".($w?" width:".$w."px;":"").($h?" height:".$h."px;":"")."'
+    $attrs = $attrs . ($w ? " width='$w'" : "") . ($h ? " height='$h'" : "");
+    $attr = "style='".($w ? " width:".$w."px;":"").($h?" height:".$h."px;":"")."'";
     $src = self::get($content, "http://placehold.it/".($w?"$w":"200").($h?"x$h":"")."&text=$content");
-    return "<div class='img'><img $class $attrs src='$src' /></div>";
+    return "<div class='img' $attr><img $class $attrs src='$src' /></div>";
   }
   static function h1($content, $class, $attrs){ return self::tag("h1", $content, $class, $attrs); }
   static function h2($content, $class, $attrs){ return self::tag("h2", $content, $class, $attrs); }

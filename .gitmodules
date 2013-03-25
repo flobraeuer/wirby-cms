@@ -7,9 +7,6 @@
 [submodule ".gitmodule/phpmailer"]
 	path = .gitmodule/phpmailer
 	url = git://github.com/Synchro/PHPMailer.git
-[submodule ".gitmodule/ckeditor"]
-	path = .gitmodule/ckeditor
-	url = git://github.com/ckeditor/ckeditor-dev.git
 [submodule ".gitmodule/kirby-toolkit"]
 	path = .gitmodule/kirby-toolkit
 	url = git://github.com/bastianallgeier/kirby.git
@@ -25,3 +22,6 @@
 [submodule ".gitmodule/jquery-address"]
 	path = .gitmodule/jquery-address
 	url = git://github.com/asual/jquery-address.git
+[submodule ".gitmodule/ckeditor-releases"]
+	path = .gitmodule/ckeditor-releases
+	url = git://github.com/ckeditor/ckeditor-releases.git

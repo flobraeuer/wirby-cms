@@ -9,7 +9,7 @@
 <?= wirby::load('head'); ?>
 
 </head>
-<body class="<?= browser::css() ?>">
+<body class="<?= browser::css() ?>" data-lang="<?= l::current() ?>">
 
   <? if(w::is_a()){ ?><form id="wirby-form" method="post" accept-charset="utf-8" enctype="multipart/form-data"><? } ?>
   <? wirby::body(); ?>
@@ -21,7 +21,7 @@
     <div class="row-fluid" id="header">
       <!--<img id="logo" src="gemuese/assets/logo.png" />-->
 
-      <div id="leap">
+      <div id="leap" class='leap <?= w::is("start", "hide") ?>'>
         <div>
           <?= w::p("leap-text"); ?>
           <?= w::p("leap-hidden", "hidden-phone") ?>
@@ -41,7 +41,7 @@
 
     <div class="row-fluid">
       <div id="content-border" class="span12">
-        <div id="content">
+        <div id="content" class="<?= w::page() ?>">
 
           <? if(w::c("page")) { ?>
             <?= w::load(w::c("page")) ?>

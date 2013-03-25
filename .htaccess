@@ -5,7 +5,7 @@ RewriteRule ^admin$ index.php?admin=1 [NC,QSA,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^([a-z]{2})/(.*)$ index.php?page=$2&lang=$1 [NC,QSA,L]
+RewriteRule ^([a-z]{2})/(.*)$ index.php?lang=$1&page=$2 [NC,QSA,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

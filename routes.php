@@ -32,6 +32,15 @@ c::set("routes", array(
     "about-celik"       => "about",
     "contact"           => "contact",
     "imprint"           => "imprint"
+  ),
+
+  "gemuese.es" => array(
+    "noticias-ofertas"  => "news",
+    "tienda-online"     => "order",
+    "cesta-de-frutas"   => "fruits",
+    "quienes-somos"     => "about",
+    "contacto"          => "contact",
+    "imprenta"          => "imprint"
   )
 
 ));

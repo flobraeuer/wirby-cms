@@ -79,7 +79,7 @@ body{
   #logo{ left: -150px; }
 }
 
-#leap {
+.leap {
   position: absolute;
   top: 50px;
   right: 0;
@@ -88,25 +88,25 @@ body{
   background: rgba(255,255,255, 0.5);
 }
 
-#leap>div {
+.leap>div {
   /*background-color: #D85E5E;
   background: rgba(216, 94, 94, 1);
   text-shadow: 1px -1px 1px rgb(255, 255, 255);*/
   background: rgba(255,255,255,0.8);
-  color: rgb(198, 90, 17);
+  color: #D22817;
   padding: 8px 13px 10px 13px;
   margin: 0;
   border-radius: 4px;
 }
 
-#leap p {
+.leap p {
   display: inline-block;
   font-size: 35px;
   line-height: 30px;
   margin: 0;
 }
 
-#leap a {
+.leap a {
   display: block;
   position: absolute;
   bottom: -15px;
@@ -117,12 +117,26 @@ body{
   background: none;
   text-shadow: 0px 0px 2px #000;
 }
-/*#leap div {
+
+#content.start {
+  background-color: rgba(255,255,255,0.6);
+}
+
+#content .leap {
+  top: 120px;
+  right: 20px;
+}
+#content .leap a {
+  font-size: 16px;
+}
+
+/*
+.leap div {
   position: absolute;
   top: -15px;
   right: 8px;
 }
-#leap div a {
+.leap div a {
   display: inline-block;
   position: relative;
   top: 0; bottom: 0; right: 0; left: 0;
@@ -147,9 +161,10 @@ ul.horizontal li {
 }
 
 #tab-menu .left {
-  position: absolute;
+  float: left;
+  /*position: absolute;
   left: 0;
-  bottom: 0;
+  bottom: 0;*/
 }
 
 #tab-menu a:hover, #tab-menu li.active a{
@@ -221,7 +236,10 @@ ul.horizontal li {
 }
 
 .img {
+  display: inline-block;
+  display: table-cell;
   position: relative;
+  vertical-align: middle;
 }
 .img.center {
   display: table-cell;

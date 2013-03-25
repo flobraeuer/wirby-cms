@@ -24,9 +24,10 @@ function wirby_changed(id){
   if($.inArray(id, wirby_changes) == -1){
     wirby_changes.push(id);
     wirby_count++;
+    var l = $("body").data("lang");
     var s = wirby_count>1 ? "Änderungen" : "Änderung";
     var a = $("<a>")
-            .attr({"href": "#", "title": "Alle Inhalte abschicken"})
+            .attr({"href": "#", "title": "Alle "+(l?l+" ":"")+"Inhalte abschicken"})
             .text(wirby_count+" "+s+" speichern");
     $("#wirby-editors").html(a);
     $("#wirby-editors a").unbind("click").bind("click", function(e){ e.preventDefault(); wirby_save(); });
@@ -35,16 +36,19 @@ function wirby_changed(id){
 
 function wirby_save(){
   var contents = {};
+  var lang = $("body").data("lang") || "de";
   $.each(wirby_changes, function(i, id){
+    console.log("CMS: Save "+id);
     var content = null;
-    if( content = $("#"+id).data("img") ) console.log("CMS: Image "+content);
-    else content = CKEDITOR.instances[id].getData();
-    contents[id] = content;
+    if( content = $("#"+id).is("img") ) content = $("#"+id).attr("src");
+    else content = CKEDITOR.instances[id].getData().replace(/&nbsp;/gi, " ");
+    if( content ) contents[id] = content;
+    else console.log("Fehler bei id="+id);
   });
   $.ajax({
     url: "/",
     type: "post",
-    data: { "type": "update", "contents": contents },
+    data: { "type": "update", "contents": contents, "lang": lang },
     dataType: "json",
     success: function(data, text, xhr){
       log(data);
@@ -62,8 +66,10 @@ function wirby_save(){
 };
 
 function wirby_make(editor){
-  $editor = $(editor); // jquery object, the other one is pure html
-  var id = $editor.attr("id");
+  $editor = $(editor);                // jquery object, the other one is pure html
+  var id = $editor.attr("id");        // if specified by template
+  if(!id) id = $editor.data("wirby"); // otherwise take the wirby identifier
+  $editor.attr("id", id);             // set it explicitly to avoid problems
   if($editor.is("a")){
     // TODO: editable menu
   }
@@ -73,6 +79,7 @@ function wirby_make(editor){
   else{
     // http://docs.ckeditor.com/#!/guide/dev_toolbar
     var config = {
+      allowedContent: true, // http://docs.ckeditor.com/#!/guide/dev_advanced_content_filter
       toolbarGroups: [
         { name: "undo", groups: [ "undo", "cleanup" ] },
         { name: "basicstyles", groups: [ "basicstyles", "links" ] }
@@ -117,6 +124,7 @@ function wirby_make(editor){
       debug: true,
       multiple: false,
       request: { endpoint: '/?type=upload' },
+      deleteFile: { enabled: false }, // https://github.com/valums/file-uploader/blob/master/docs/options-fineuploaderbasic.md#deletefile-option-properties
       dragAndDrop: {
         hideDropzones: false,
         disableDefaultDropzone: true,
@@ -136,7 +144,7 @@ function wirby_make(editor){
     $uploader.on("complete", function(e, id, file, json){
       $editor.attr("src", "/gemuese/files/"+file);
       $editor.data("img", file);
-      wirby_changed( $editor.attr("id") );
+      wirby_changed( $editor.data("wirby") );
     });
     console.log($wrapper);
 

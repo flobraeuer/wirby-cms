@@ -56,13 +56,13 @@ c::set("assets_js", array( // js libraries used always
   "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js",
   "/wirby/libs/jquery-address/jquery.address-1.6.min.js",
   "/wirby/libs/".c::get("js_lib_tmpl"),
-  "/wirby/assets/bootstrap.min.js",
+  "/wirby/libs/bootstrap/js/bootstrap.min.js",
   "/wirby/assets/datatable.bootstrap.js",
   "/wirby/assets/datatable.tabletools.min.js"
 ));
 
 c::set("assets_admin", array( // js libraries used when logged in
-  "/wirby/libs/ckeditor/ckeditor.js",
+  //"/wirby/libs/ckeditor/ckeditor.js",
   "/wirby/libs/fileuploader/client/js/jquery-plugin.js",
   //"/wirby/libs/jquery.jeditable.js",
   //"/wirby/libs/".c::get("js_lib_editor"),

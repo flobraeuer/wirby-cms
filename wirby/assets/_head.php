@@ -1,6 +1,7 @@
 <meta name="generator" content="Wirby" />
 
-<link type="text/css" rel="stylesheet" href="/wirby/assets/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="/wirby/libs/bootstrap/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet" href="/wirby/libs/bootstrap/css/bootstrap-responsive.min.css" />
 <link type="text/css" rel="stylesheet" href="/wirby/assets/datatable.bootstrap.css" />
 
 <? if(w::in_a()) { ?>
@@ -49,3 +50,7 @@
   <meta name="msvalidate.01" content='<?= w::c("microsoft_verification") ?>' />
 <? } ?>
 
+<style type="text/css">
+  a.wirby { display: block; position: fixed; left: 5px; bottom: 5px; width: 20px; height: 20px; opacity: 0.0; }
+  a.wirby:hover { opacity: 0.7; -webkit-transition: all 0.5s; -moz-transition: all 0.5s; transition: all 0.5s; }
+</style>

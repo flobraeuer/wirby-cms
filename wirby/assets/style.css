@@ -91,9 +91,6 @@
 }
 .qq-upload-extra-drop-area {
     position: relative;
-    margin-top: 50px;
-    font-size: 16px;
-    padding-top: 30px;
     height: 20px;
     min-height: 40px;
 }
@@ -107,9 +104,7 @@
 }
 .qq-upload-list li {
     margin: 0;
-    padding: 9px;
-    line-height: 15px;
-    font-size: 16px;
+    padding: 0;
     background-color: #FFF0BD;
 }
 .qq-upload-file, .qq-upload-spinner, .qq-upload-size, .qq-upload-cancel, .qq-upload-retry, .qq-upload-failed-text, .qq-upload-finished {
@@ -151,7 +146,6 @@
     display: inline;
 }
 .qq-upload-size, .qq-upload-cancel, .qq-upload-retry {
-    font-size: 12px;
     font-weight: normal;
 }
 .qq-upload-failed-text {
