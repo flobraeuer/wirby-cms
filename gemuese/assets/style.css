@@ -9,11 +9,26 @@
  */
 
 body{
-  background: #000 url("../files/background-04.jpg") no-repeat;
+  background-color: #eee;
+  background-repeat: no-repeat;
+  background-size: cover;
   background-attachment: fixed;
   overflow-y: scroll;
   font-family: Open Sans, Arial, sans-serif;
 }
+
+body.bg01 { background-image: url(../files/backgrounds/01.jpg); }
+body.bg02 { background-image: url(../files/backgrounds/02.jpg); }
+body.bg03 { background-image: url(../files/backgrounds/03.jpg); }
+body.bg04 { background-image: url(../files/backgrounds/04.jpg); }
+body.bg05 { background-image: url(../files/backgrounds/05.jpg); }
+body.bg06 { background-image: url(../files/backgrounds/06.jpg); }
+body.bg07 { background-image: url(../files/backgrounds/07.jpg); }
+body.bg08 { background-image: url(../files/backgrounds/08.jpg); }
+body.bg09 { background-image: url(../files/backgrounds/09.jpg); }
+body.bg10 { background-image: url(../files/backgrounds/10.jpg); }
+body.bg11 { background-image: url(../files/backgrounds/11.jpg); }
+body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
 
 #raster {
   z-index: -1;
@@ -63,21 +78,31 @@ body{
 
 #logo{
   position: absolute;
-  top: 10px;
-  left: -20px;
-  width: 350px;
-  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 150px;
   -webkit-transition: all .2s;
   -moz-transition: all .2s;
   -o-transition: all .2s;
   transition: all .2s;
+
+  padding: 0 7px 7px 7px;
+  border-radius: 0 0 7px 7px;
+  background: rgba(255,255,255, 0.5);
 }
-@media (max-width: 768px) {
+#logo>div {
+  background: rgba(255,255,255,0.8);
+  padding: 5px 20px 15px 13px;
+  margin: 0;
+  border-radius: 0 0 4px 4px;
+}
+
+/*@media (max-width: 768px) {
   #logo{ left: -100px; }
 }
 @media (max-width: 480px) {
   #logo{ left: -150px; }
-}
+}*/
 
 .leap {
   position: absolute;

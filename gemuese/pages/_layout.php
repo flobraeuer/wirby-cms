@@ -9,7 +9,7 @@
 <?= wirby::load('head'); ?>
 
 </head>
-<body class="<?= browser::css() ?>" data-lang="<?= l::current() ?>">
+<body class="<?= browser::css() ?> <?= "bg0".rand(1, 9) ?>" data-lang="<?= l::current() ?>">
 
   <? if(w::is_a()){ ?><form id="wirby-form" method="post" accept-charset="utf-8" enctype="multipart/form-data"><? } ?>
   <? wirby::body(); ?>
@@ -21,7 +21,8 @@
     <div class="row-fluid" id="header">
       <!--<img id="logo" src="gemuese/assets/logo.png" />-->
 
-      <div id="leap" class='leap <?= w::is("start", "hide") ?>'>
+      <div id="logo"><?= w::img("start-img", "Familienbetrieb Celik", 100) ?></div>
+      <div id="leap" class="leap">
         <div>
           <?= w::p("leap-text"); ?>
           <?= w::p("leap-hidden", "hidden-phone") ?>
