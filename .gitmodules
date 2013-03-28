@@ -1,6 +1,3 @@
-[submodule ".gitmodule/meekrodb"]
-	path = .gitmodule/meekrodb
-	url = git://github.com/Meekro/meekrodb.git
 [submodule ".gitmodule/raintpl"]
 	path = .gitmodule/raintpl
 	url = git://github.com/rainphp/raintpl.git
@@ -15,10 +12,10 @@
 	url = git://github.com/headjs/headjs.git
 [submodule ".gitmodule/icanhaz"]
 	path = .gitmodule/icanhaz
-	url = git://github.com/andyet/ICanHaz.js
+	url = git://github.com/HenrikJoreteg/ICanHaz.js.git
 [submodule ".gitmodule/fileuploader"]
 	path = .gitmodule/fileuploader
-	url = git://github.com/valums/file-uploader.git
+	url = git://github.com/Widen/fine-uploader.git
 [submodule ".gitmodule/jquery-address"]
 	path = .gitmodule/jquery-address
 	url = git://github.com/asual/jquery-address.git
