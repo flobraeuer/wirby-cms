@@ -1,6 +1,3 @@
-[submodule ".gitmodule/meekrodb"]
-	path = .gitmodule/meekrodb
-	url = git://github.com/Meekro/meekrodb.git
 [submodule ".gitmodule/raintpl"]
 	path = .gitmodule/raintpl
 	url = git://github.com/rainphp/raintpl.git
