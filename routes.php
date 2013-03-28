@@ -5,7 +5,9 @@
  */
 
 c::set("domains", array(
-  "gemuese.test" => "gemuese"
+  "gemuese.test" => "gemuese",
+  "celik-obstgemuese.at" => "gemuese",
+  "www.celik-obstgemuese.at" => "gemuese"
 ));
 
 /**

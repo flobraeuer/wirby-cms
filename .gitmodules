@@ -12,7 +12,7 @@
 	url = git://github.com/headjs/headjs.git
 [submodule ".gitmodule/icanhaz"]
 	path = .gitmodule/icanhaz
-	url = git://github.com/andyet/ICanHaz.js
+	url = git://github.com/HenrikJoreteg/ICanHaz.js.git
 [submodule ".gitmodule/fileuploader"]
 	path = .gitmodule/fileuploader
 	url = git://github.com/Widen/fine-uploader.git
