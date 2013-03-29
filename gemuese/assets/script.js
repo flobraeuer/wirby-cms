@@ -180,7 +180,7 @@ function site_ready(){
       $("#step2").show();
     });
     $("#step2-btn").on("click", function(){
-      $(this).addClass("disabled");
+      //$(this).addClass("disabled");
       send_order();
     });
     $("#step2-back-btn").on("click", function(){
@@ -278,6 +278,7 @@ function send_order(){
       post.code.length > 0 &&
       post.town.length > 0
     ){
+      $("#step2-btn").addClass("disabled");
       $.ajax({
         url: "/",
         type: "post",

@@ -384,18 +384,23 @@ h2 {
   left: 0;
 }
 
-.start .img {
+.start .start-img {
   float: left;
+}
+.start .start-telefon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 }
 .start h1{
   margin-top: 50px;
 }
 
-.about .img {
+.about img {
   float: right;
 }
 
-.about .img, .start .img {
+.about .img, .start .start-img {
   margin: 20px;
   border: solid 5px #fff;
   -webkit-transition: box-shadow 0.5s;

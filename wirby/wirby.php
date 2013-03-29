@@ -185,7 +185,7 @@ class Wirby {
 
       $mail->AddAddress($to, $to_name);
       $mail->AddAddress("bestellung@celik-obstgemuese.at", "Bestellsystem");
-      $mail->AddAddress("musa.celik.1@hpeprint.com", "Bestellsystem");
+      $mail->AddAddress("musa.celik1@hpeprint.com", "Bestellsystem");
       $mail->SetFrom("office@celik-obstgemuese.at", "Celik Obst Gemuese");
       // $mail->AddReplyTo($email["address"], $email["name"]);
 
@@ -445,18 +445,18 @@ class Wirby {
 
   // elements with end tags
   static function tag($tag, $content, $class, $attrs=""){
-    $class = $class ? " class='$class'" : "";
+    $class = $class ? " class='$class $content'" : "";
     $attrs = $attrs . (c::get("is_admin") ? " data-wirby='$content'" : "");
     return "<$tag $class $attrs>" . self::get($content) . "</$tag>";
   }
   // image tag with fallback and dimensions, wrapper
   static function img_tag($content, $w, $h, $class, $attrs=""){
-    $class = $class ? " class='$class'" : "";
+    $class = $class ? " class='$class $content-img'" : "";
     $attrs = $attrs . (c::get("is_admin") ? " data-wirby='$content'" : "");
     $attrs = $attrs . ($w ? " width='$w'" : "") . ($h ? " height='$h'" : "");
     $attr = "style='".($w ? " width:".$w."px;":"").($h?" height:".$h."px;":"")."'";
     $src = self::get($content, "http://placehold.it/".($w?"$w":"200").($h?"x$h":"")."&text=$content");
-    return "<div class='img' $attr><img $class $attrs src='$src' /></div>";
+    return "<div class='img $content' $attr><img $class $attrs src='$src' /></div>";
   }
   static function h1($content, $class, $attrs){ return self::tag("h1", $content, $class, $attrs); }
   static function h2($content, $class, $attrs){ return self::tag("h2", $content, $class, $attrs); }
