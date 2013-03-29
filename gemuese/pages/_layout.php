@@ -21,7 +21,7 @@
     <div class="row-fluid" id="header">
       <!--<img id="logo" src="gemuese/assets/logo.png" />-->
 
-      <div id="logo"><?= w::img("start-img", "Familienbetrieb Celik", 100) ?></div>
+      <div id="logo"><?= w::img("start-logo", "Familienbetrieb Celik", 100) ?></div>
       <div id="leap" class="leap">
         <div>
           <?= w::p("leap-text"); ?>
