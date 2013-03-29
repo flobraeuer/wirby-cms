@@ -20,7 +20,7 @@
     <input type="text" id="town" class="input-middle" placeholder="Ort">
 
     <label class="checkbox">
-      <input type="checkbox"> Den AGB zustimmen</label>
+      <input type="checkbox" id="terms"> Den AGB zustimmen</label>
   </div>
 
   <div class="span7">
@@ -69,7 +69,7 @@
 
   <div class="clearfix center">
     <div id="step2-back-btn" class="btn">Zurück</div>
-    <div id="step2-btn" class="btn btn-large btn-danger">Bestellung verbindlich abschicken</div>
+    <div id="step2-btn" class="btn btn-large btn-danger"  data-loading-text="Bestellung wurde abgeschickt ...">Bestellung verbindlich abschicken</div>
   </div>
 
 <? if(! w::is_a()){ ?></form><? } ?>

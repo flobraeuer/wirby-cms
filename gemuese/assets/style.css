@@ -361,6 +361,9 @@ h2 {
   display: none;
 }
 
+#order-items li {
+  margin: 3px 0;
+}
 #map{
   height: 400px;
   width: 100%;

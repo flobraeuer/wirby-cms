@@ -18,6 +18,7 @@ class Wirby {
     $this->language();       // init: language from server
     $this->route();          // init: routing with localization
     $this->database();       // init: connect database
+    $this->forms();          // forms: order, contact
     $this->session();        // admin: check admin session
     $this->admin();          // admin: render wirby
     return $this->render();  // content: render
@@ -122,6 +123,93 @@ class Wirby {
     c::set("page", $page); // eveything else is done in content
   }
 
+  function pad($str, $i=20, $pad=" ", $dir=STR_PAD_RIGHT){
+    return "<b>".str_pad($str."", $i, $pad, $dir)."</b>"; //STR_PAD_LEFT
+  }
+
+  function forms(){
+    $request = r::get("type", "");
+
+    if( $request == "order" && r::is_post() ){
+      if( $data = r::get("order",false) ){
+        $w = 20;
+        $s = " ";
+        $msg = "<b>M&M Online Bestellung</b><br>";
+        $msg .= "<i>Die Bestellung ist erfolgreich abgeschickt worden. Danke!</i>";
+        $msg .= "<p style='font-family: Courier New;'>";
+        $msg .= self::pad("Datum:").date("d.m.Y H:i:s")."<br>";
+        $msg .= self::pad("Name:").$data["name"]."<br>";
+        $msg .= self::pad("Firma:").$data["customer"]."<br>";
+        $msg .= self::pad("Adresse:").$data["code"]." ".$data["town"].", ".$data["street"]."<br>";
+        $msg .= self::pad("Telefon:").$data["number"]."<br>";
+        $msg .= self::pad("Email:").$data["email"]."<br>";
+        $msg .= self::pad("Computer:")."IP ".$_SERVER["REMOTE_ADDR"];//." (".$_SERVER["HTTP_USER_AGENT"].")";
+        $msg .= "</p>";
+        $msg .= "<i>Positionen der Bestellung:</i>";
+        $msg .= "<p style='font-family: Courier New;'>";
+
+        foreach($data["items"] as $i => $item){
+          $msg .= "<i>".str_pad($i+1,2,"0",STR_PAD_LEFT).".</i> ".self::pad($item[0],40).$item[1]." ".$item[2]."<br>";
+        }
+
+        $msg .= "</p>";
+        $msg .= "<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
+
+        $msg = str_replace("  ", "&nbsp;&nbsp;", $msg);
+        self::mail("Bestellung bei Celik Obst Gemuese", $msg, $data["email"], $data["name"]);
+
+        if( r::is_ajax() ){
+          content::type("json");
+          content::start();
+          $info = array(
+            "type" => "success",
+            "msg" => $msg,
+            "name" => $data["name"]
+          );
+          echo a::json($info);
+          content::end(false);
+          die();
+        }
+        else{
+          //c::set("has_info", $length." ".($length>1?"Einträge":"Eintrag")." neu");
+          //$track = track("content", $length.": ".$titles);
+        }
+      }
+    }
+  }
+
+  function mail($subject, $msg, $to, $to_name){
+    try {
+      require_once('libs/phpmailer/class.phpmailer.php');
+      $mail = new PHPMailer();
+
+      $mail->AddAddress($to, $to_name);
+      $mail->AddAddress("bestellung@celik-obstgemuese.at", "Bestellsystem");
+      $mail->AddAddress("musa.celik.1@hpeprint.com", "Bestellsystem");
+      $mail->SetFrom("office@celik-obstgemuese.at", "Celik Obst Gemuese");
+      // $mail->AddReplyTo($email["address"], $email["name"]);
+
+      $mail->Subject = $subject;
+      $mail->AltBody = $msg;
+      $mail->CharSet = "utf-8";
+      $mail->MsgHTML( $msg );
+
+      $mail->IsSMTP();                // telling the class to use SMTP
+      $mail->SMTPDebug = 1;           // enables SMTP debug information (1 = errors and messages, 2 = messages only)
+      $mail->SMTPAuth  = true;                          // enable SMTP authentication
+      $mail->Host      = "wp266.webpack.hosteurope.de"; // SMTP server
+      $mail->Username  = "wp10625343-bestellung";       // SMTP account username
+      $mail->Password  = "proworx01";                   // SMTP account password
+
+      $send = $mail->Send();
+      return true;
+
+    } catch (Exception $e) {
+      echo a::json($json_encode( array("status" => "error", "msg" => ($e->getMessage()) ) ) );
+      content::end(false);
+      die();
+    };
+  }
 
   /*****************************************************************************
    * Administration

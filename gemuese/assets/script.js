@@ -180,14 +180,14 @@ function site_ready(){
       $("#step2").show();
     });
     $("#step2-btn").on("click", function(){
-      alert("PDF");
+      $(this).addClass("disabled");
+      send_order();
     });
     $("#step2-back-btn").on("click", function(){
       $("#step2").hide();
       $("#step1").show();
     });
     log("buttons binded");
-
 
   } else {
     log("datatable not embedded");
@@ -246,6 +246,61 @@ function order_dropdown(element){
   var d = e.parents("ul").siblings("button").find("span");
   d.text( e.text() );
 };
+
+function send_order(){
+  var items = [];
+  $("#order-items").children("li").each(function(i, item){
+    item = $(item);
+    items.push([
+      item.find("input[name=artikel]").val(),
+      item.find("input[name=menge]").val(),
+      item.find("input[name=verpackung]").val()
+    ]);
+  });
+  var post = {
+    "name": $("input[name=gender]:checked").val()+" "+$("input[id=name]").val(),
+    "customer": $("input[id=customer]").val(),
+    "number": $("input[id=number]").val(),
+    "email": $("input[id=email]").val(),
+    "street": $("input[id=street]").val(),
+    "code": $("input[id=code]").val(),
+    "town": $("input[id=town]").val(),
+    "items": items
+  }
+  if($("input[id=terms]").is(":checked")){
+    if(
+      $("input[name=gender]:checked").length > 0 &&
+      post.name.length > 0 &&
+      post.customer.length > 0 &&
+      post.number.length > 0 &&
+      post.email.length > 0 &&
+      post.street.length > 0 &&
+      post.code.length > 0 &&
+      post.town.length > 0
+    ){
+      $.ajax({
+        url: "/",
+        type: "post",
+        data: { "type": "order", "order": post },
+        dataType: "json",
+        success: function(data, text, xhr){
+          log(data.msg);
+          alert("Danke für die Bestellung, "+data.name+"!");
+        },
+        error: function(xhr, text, error){
+          log(text+":");
+          log(error);
+          alert("Leider ist ein Fehler aufgetreten.\nRufen Sie uns bitte unter +43 660 6522007 an.\nDanke!")
+        },
+        complete: function(){
+          $("#step2-btn").removeClass("disabled");
+        }
+      });
+    }
+    else alert("Bitte fülle alle Daten aus. Danke!");
+  }
+  else alert("Bitte akzeptiere unsere Geschäftsbedingungen. Danke!");
+}
 
 /**
  * Slide Tabs
