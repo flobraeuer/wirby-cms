@@ -156,7 +156,7 @@ class Wirby {
         $msg .= "<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
 
         $msg = str_replace("  ", "&nbsp;&nbsp;", $msg);
-        self::mail("Bestellung bei Celik Obst Gemuese", $msg, $data["email"], $data["name"]);
+        self::mail("M&M Bestellung von ".$data["name"], $msg, $data["email"], $data["name"]);
 
         if( r::is_ajax() ){
           content::type("json");
