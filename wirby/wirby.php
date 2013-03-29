@@ -195,7 +195,7 @@ class Wirby {
       $mail->MsgHTML( $msg );
 
       $mail->IsSMTP();                // telling the class to use SMTP
-      $mail->SMTPDebug = 1;           // enables SMTP debug information (1 = errors and messages, 2 = messages only)
+      $mail->SMTPDebug = false;       // enables SMTP debug information (1 = errors and messages, 2 = messages only)
       $mail->SMTPAuth  = true;                          // enable SMTP authentication
       $mail->Host      = "wp266.webpack.hosteurope.de"; // SMTP server
       $mail->Username  = "wp10625343-bestellung";       // SMTP account username
