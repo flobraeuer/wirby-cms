@@ -3,7 +3,7 @@
 <head>
 
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-<title>M&M Obst und Gemüse</title>
+<title>M&M Celik Obst und Gemüse</title>
 
 <?= wirby::head(); ?>
 <?= wirby::load('head'); ?>
@@ -44,13 +44,13 @@
       <div id="content-border" class="span12">
         <div id="content" class="<?= w::page() ?>">
 
-          <? if(w::c("page")) { ?>
-            <?= w::load(w::c("page")) ?>
-          <? } else { ?>
+          <? if(w::page()): ?>
+            <?= w::load(w::page()) ?>
+          <? else: ?>
             <div class="tab-content">
               <div class="tab-pane" id="start"><?= w::load(w::c("start")) ?></div>
             </div>
-          <? } ?>
+          <? endif; ?>
 
         </div>
         <div id="actions">
@@ -63,10 +63,16 @@
           <?= w::a("Espa&ntilde;ol", w::to_lang("es")) ?>
           <!--i class="icon-info-sign icon-white"></i-->
           <?= w::a("tab-imprint", w::to("imprint"), "last") ?>
+          <a href="http://www.webarchitects.at" class="last" target="_blank" data-toggle="tooltip" title="made with 'Wirby' and ♥ by Florian Bräuer" data-placement="left" title="Feedback?">♥</a>
         </div>
       </div>
+
     </div>
   </div>
+
+  <? if(w::page()=="imprint" OR w::page()=="order"): ?>
+    <?= w::load("terms") ?>
+  <? endif; ?>
 
   <div id="raster"></div>
   <? if(w::is_a()){ ?><input name="type" type="hidden" value="update"></form><? } ?>

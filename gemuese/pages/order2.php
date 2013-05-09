@@ -1,32 +1,31 @@
-<div class="row-fluid" id="step2">
+<div class="row-fluid" <? if(! w::is_a()) echo 'id="step2"'; ?> >
 <? if(! w::is_a()){ ?><form class="form" method="post"><? } ?>
 
   <div class="span5">
-    <h2>Kundendaten</h2>
-    <label class="radio inline">
-      <input type="radio" name="gender" value="Frau"> Frau</label>
-    <label class="radio inline">
-      <input type="radio" name="gender" value="Herr"> Herr</label><br>
-    <input type="text" id="name" placeholder="Name"><br>
-    <input type="text" id="customer" placeholder="Firma">
+    <?= w::h2("order-form-h") ?>
 
-    <label for="number">Kontakt</label>
-    <input type="text" id="number" placeholder="Telefonnummer"><br>
-    <input type="text" id="email" placeholder="Emailadresse">
+    <?= w::label("gender-f", "radio inline", "", w::input("radio", "gender-f", "", "name='gender'")) ?>
+    <?= w::label("gender-m", "radio inline", "", w::input("radio", "gender-m", "", "name='gender'")) ?>
+    <?= w::input("text", "name") ?><br>
+    <?= w::input("text", "customer") ?>
 
-    <label for="street">Adresse</label>
-    <input type="text" id="street" placeholder="Straße Hausnummer"><br>
-    <input type="text" id="code" class="input-mini" placeholder="PLZ">
-    <input type="text" id="town" class="input-middle" placeholder="Ort">
+    <?= w::label("number") ?>
+    <?= w::input("text", "number") ?><br>
+    <?= w::input("text", "email") ?>
 
-    <label class="checkbox">
-      <input type="checkbox" id="terms"> Den AGB zustimmen</label>
+    <?= w::label("street") ?>
+    <?= w::input("text", "street") ?><br>
+    <?= w::input("text", "code", "input-mini") ?>
+    <?= w::input("text", "town", "input-middle") ?>
+
+    <?= w::label("accept-terms", "checkbox", "", w::input("checkbox", "accept-terms") ) ?>
+
   </div>
 
   <div class="span7">
-    <h2>Ausgewählte Produkte</h2>
+    <?= w::h2("order-selected-articles-h") ?>
     <div class="well">
-      <p id="order-info" class="alert alert-error">Sie haben unterhalb noch keine Produkte ausgewählt. Ihre Bestellung könnte so aussehen:</p>
+      <?= w::p("order-info", "alert alert-error") ?>
 
       <script id="add_item" type="text/html">
         <li {{#demo}}class="demo"{{/demo}} {{#id}}id="{{id}}"{{/id}}>
@@ -68,8 +67,8 @@
   </div>
 
   <div class="clearfix center">
-    <div id="step2-back-btn" class="btn">Zurück</div>
-    <div id="step2-btn" class="btn btn-large btn-danger"  data-loading-text="Bestellung wurde abgeschickt ...">Bestellung verbindlich abschicken</div>
+    <?= w::button("step2-back-btn", "btn") ?>
+    <?= w::button("step2-btn", "btn btn-large btn-danger", "data-loading-text='Bestellung wurde abgeschickt ...'") ?>
   </div>
 
 <? if(! w::is_a()){ ?></form><? } ?>

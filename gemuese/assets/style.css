@@ -389,14 +389,25 @@ h2 {
 }
 .start .start-telefon {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 0;
+  right: 8px;
 }
 .start h1{
   margin-top: 50px;
 }
 
-.about img {
+.start .start-schlagzeile{
+  clear: both;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.start .start-div {
+  max-width: 70%;
+  margin-left: 20px;
+}
+
+.about .about-img {
   float: right;
 }
 

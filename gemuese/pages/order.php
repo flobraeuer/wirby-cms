@@ -17,8 +17,9 @@
   </div>
 
   <div class="clearfix center">
-    <div id="step1-btn" class="btn btn-large btn-danger">Weiter zu Bestellübersicht</div>
+    <?= w::button("step1-btn", "btn btn-large btn-danger", "", "id='step1-btn'") ?>
   </div>
+
 </div>
 
-<? wirby::load("order2") ?>
+<? w::load("order2") ?>

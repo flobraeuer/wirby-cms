@@ -444,32 +444,38 @@ class Wirby {
   }
 
   // elements with end tags
-  static function tag($tag, $content, $class, $attrs=""){
-    $class = $class ? " class='$class $content'" : "";
-    $attrs = $attrs . (c::get("is_admin") ? " data-wirby='$content'" : "");
-    return "<$tag $class $attrs>" . self::get($content) . "</$tag>";
+  static function tag($tag, $content, $class, $attrs="", $inner=""){
+    if( self::is_a() AND in_array($tag, array("span", "button", "input", "label")) ) $tag = "p"; // CKeditor won't work with button/span
+    $closed = in_array($tag, array("input")) ? true : false;
+    $class = "class='$content".($class ? " $class" : "")."'";
+    $attrs = $attrs . (($inner == "" AND self::is_a()) ? " data-wirby='$content'" : "");
+    $attrs = $attrs . ($tag == "input" ? " placeholder='" . self::get($content) . "'" : "");
+    return ( $closed ? "<$tag $class $attrs />" : "<$tag $class $attrs>$inner" . self::get($content) . "</$tag>" );
   }
+
   // image tag with fallback and dimensions, wrapper
   static function img_tag($content, $w, $h, $class, $attrs=""){
-    $class = $class ? " class='$class $content-img'" : "";
-    $attrs = $attrs . (c::get("is_admin") ? " data-wirby='$content'" : "");
+    $class = "class='$content-img".($class ? " $class" : "")."'";
+    $attrs = $attrs . (self::is_a() ? " data-wirby='$content'" : "");
     $attrs = $attrs . ($w ? " width='$w'" : "") . ($h ? " height='$h'" : "");
     $attr = "style='".($w ? " width:".$w."px;":"").($h?" height:".$h."px;":"")."'";
     $src = self::get($content, "http://placehold.it/".($w?"$w":"200").($h?"x$h":"")."&text=$content");
     return "<div class='img $content' $attr><img $class $attrs src='$src' /></div>";
   }
-  static function h1($content, $class, $attrs){ return self::tag("h1", $content, $class, $attrs); }
-  static function h2($content, $class, $attrs){ return self::tag("h2", $content, $class, $attrs); }
-  static function h3($content, $class, $attrs){ return self::tag("h3", $content, $class, $attrs); }
-  static function h4($content, $class, $attrs){ return self::tag("h4", $content, $class, $attrs); }
-  static function h5($content, $class, $attrs){ return self::tag("h5", $content, $class, $attrs); }
-  static function h6($content, $class, $attrs){ return self::tag("h6", $content, $class, $attrs); }
-  static function p ($content, $class, $attrs){ return self::tag("p",  $content, $class, $attrs); }
-  static function div($content, $class, $attrs){ return self::tag("div", $content, $class, $attrs); }
-  static function span($content, $class, $attrs){ return self::tag("span", $content, $class, $attrs); }
-  static function a ($content, $url="#", $class, $attrs=""){ return self::tag("a", $content, $class, $attrs." href='$url'"); }
+  static function h1($content, $class, $attrs){       return self::tag("h1", $content, $class, $attrs); }
+  static function h2($content, $class, $attrs){       return self::tag("h2", $content, $class, $attrs); }
+  static function h3($content, $class, $attrs){       return self::tag("h3", $content, $class, $attrs); }
+  static function h4($content, $class, $attrs){       return self::tag("h4", $content, $class, $attrs); }
+  static function h5($content, $class, $attrs){       return self::tag("h5", $content, $class, $attrs); }
+  static function h6($content, $class, $attrs){       return self::tag("h6", $content, $class, $attrs); }
+  static function p ($content, $class, $attrs){       return self::tag("p",  $content, $class, $attrs); }
+  static function div($content, $class, $attrs){      return self::tag("div", $content, $class, $attrs); }
+  static function span($content, $class, $attrs){     return self::tag("span", $content, $class, $attrs); }
+  static function button ($content, $class, $attrs){  return self::tag("button",  $content, $class, $attrs); }
+  static function a ($content, $url="#", $class, $attrs=""){          return self::tag("a", $content, $class, $attrs." href='$url'"); }
+  static function label ($for, $class, $attrs="", $inner=""){         return self::tag("label", $for."-label", $class, $attrs." for='$for'", $inner); }
+  static function input ($type, $content, $class, $attrs=""){         return self::tag("input", $content, $class, $attrs." type='$type' id='$content'"); }
   static function img ($content, $alt="", $w, $h, $class, $attrs=""){ return self::img_tag($content, $w, $h, $class, $attrs." alt='$alt'"); }
-
 }
 
 class w extends wirby {
