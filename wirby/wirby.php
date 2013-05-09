@@ -447,20 +447,21 @@ class Wirby {
   static function tag($tag, $content, $class, $attrs="", $inner=""){
     if( self::is_a() AND in_array($tag, array("span", "button", "input", "label")) ) $tag = "p"; // CKeditor won't work with button/span
     $closed = in_array($tag, array("input")) ? true : false;
-    $class = "class='$content".($class ? " $class" : "")."'";
+    $id = "id='$content'";
+    $class = $class ? "class='$class'" : "";
     $attrs = $attrs . (($inner == "" AND self::is_a()) ? " data-wirby='$content'" : "");
     $attrs = $attrs . ($tag == "input" ? " placeholder='" . self::get($content) . "'" : "");
-    return ( $closed ? "<$tag $class $attrs />" : "<$tag $class $attrs>$inner" . self::get($content) . "</$tag>" );
+    return ( $closed ? "<$tag $id $class $attrs />" : "<$tag $id $class $attrs>$inner" . self::get($content) . "</$tag>" );
   }
 
   // image tag with fallback and dimensions, wrapper
   static function img_tag($content, $w, $h, $class, $attrs=""){
-    $class = "class='$content-img".($class ? " $class" : "")."'";
+    $class = $class ? "class='$class'" : "";
     $attrs = $attrs . (self::is_a() ? " data-wirby='$content'" : "");
     $attrs = $attrs . ($w ? " width='$w'" : "") . ($h ? " height='$h'" : "");
     $attr = "style='".($w ? " width:".$w."px;":"").($h?" height:".$h."px;":"")."'";
     $src = self::get($content, "http://placehold.it/".($w?"$w":"200").($h?"x$h":"")."&text=$content");
-    return "<div class='img $content' $attr><img $class $attrs src='$src' /></div>";
+    return "<div id='$content' class='img' $attr><img id='$content-img' $class $attrs src='$src' /></div>";
   }
   static function h1($content, $class, $attrs){       return self::tag("h1", $content, $class, $attrs); }
   static function h2($content, $class, $attrs){       return self::tag("h2", $content, $class, $attrs); }

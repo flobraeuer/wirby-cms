@@ -384,10 +384,10 @@ h2 {
   left: 0;
 }
 
-.start .start-img {
+.start #start-img {
   float: left;
 }
-.start .start-telefon {
+.start #start-telefon {
   position: absolute;
   bottom: 0;
   right: 8px;
@@ -396,22 +396,22 @@ h2 {
   margin-top: 50px;
 }
 
-.start .start-schlagzeile{
+.start #start-schlagzeile{
   clear: both;
   margin-top: 20px;
   margin-left: 20px;
 }
 
-.start .start-div {
+.start #start-div {
   max-width: 70%;
   margin-left: 20px;
 }
 
-.about .about-img {
+.about #about-img {
   float: right;
 }
 
-.about .img, .start .start-img {
+.about .img, .start #start-img {
   margin: 20px;
   border: solid 5px #fff;
   -webkit-transition: box-shadow 0.5s;
