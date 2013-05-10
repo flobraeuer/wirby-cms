@@ -18,7 +18,7 @@
 
 <? if(w::in_a()){ ?>
 
-<div class="navbar">
+<div class="navbar navbar-fixed-bottom">
   <div class="navbar-inner">
     <a class="brand" href="#">Bearbeitungsmodus</a>
     <ul class="nav">

@@ -17,28 +17,34 @@
   <noscript><div class="alert alert-error">Sie haben in ihrem Browser leider kein Javascript aktiviert. Es kann zu Anzeigeproblemen kommen!</div></noscript>
   <img class="telefon" src="<?= wirby::asset('telefon.png'); ?>" alt="M&amp;M Celik ist erreichbar unter +4316151800" />
 
+  <div id="header-border">
+    <div id="header">
+      <div class="container">
+        <div id="logo"><?= w::img("start-logo", "Familienbetrieb Celik", 100) ?></div>
+        <div id="leap" class="leap">
+          <div>
+            <?= w::p("leap-text"); ?>
+            <?= w::p("leap-hidden", "hidden-phone") ?>
+          </div>
+          <?= w::a("leap-sub", w::to("about")) ?>
+        </div>
+
+        <ul id="tab-menu" class="horizontal">
+          <li class='<?= w::is("start")  ?> left'><?= w::a("tab-start", w::to("")) ?></li>
+          <li class='<?= w::is("news")   ?>'><?= w::a("tab-news",    w::to("news")) ?></li>
+          <li class='<?= w::is("order")  ?>'><?= w::a("tab-order",   w::to("order")) ?></li>
+          <li class='<?= w::is("fruits") ?>'><?= w::a("tab-fruits",  w::to("fruits")) ?></li>
+          <li class='<?= w::is("about")  ?>'><?= w::a("tab-about",   w::to("about")) ?></li>
+          <li class='<?= w::is("contact")?>'><?= w::a("tab-contact", w::to("contact")) ?></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <div class="container" id="container">
 
-    <div class="row-fluid" id="header">
+    <div class="row-fluid" id="header-dummy">
       <!--<img id="logo" src="gemuese/assets/logo.png" />-->
-
-      <div id="logo"><?= w::img("start-logo", "Familienbetrieb Celik", 100) ?></div>
-      <div id="leap" class="leap">
-        <div>
-          <?= w::p("leap-text"); ?>
-          <?= w::p("leap-hidden", "hidden-phone") ?>
-        </div>
-        <?= w::a("leap-sub", w::to("about")) ?>
-      </div>
-
-      <ul id="tab-menu" class="horizontal">
-        <li class='<?= w::is("start")  ?> left'><?= w::a("tab-start", "/") ?></li>
-        <li class='<?= w::is("news")   ?>'><?= w::a("tab-news",    w::to("news")) ?></li>
-        <li class='<?= w::is("order")  ?>'><?= w::a("tab-order",   w::to("order")) ?></li>
-        <li class='<?= w::is("fruits") ?>'><?= w::a("tab-fruits",  w::to("fruits")) ?></li>
-        <li class='<?= w::is("about")  ?>'><?= w::a("tab-about",   w::to("about")) ?></li>
-        <li class='<?= w::is("contact")?>'><?= w::a("tab-contact", w::to("contact")) ?></li>
-      </ul>
     </div>
 
     <div class="row-fluid">
@@ -56,7 +62,7 @@
         </div>
 
         <div id="actions">
-          <div class="pull-left center">
+          <div class="pull-left">
             <!--a href="http://www.facebook.com/pages/MM-Celik-Obst-und-Gem%C3%BCse/453488338033651"><i class="icon-share-alt icon-white"></i></a-->
             <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FMM-Celik-Obst-und-Gem%25C3%25BCse%2F453488338033651&amp;send=false&amp;layout=box_count&amp;show_faces=false&amp;font=verdana&amp;colorscheme=light&amp;action=like&amp;appId=517712251593236&amp;width=90&amp;height=75" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:75px;" allowTransparency="true"></iframe>
             <?= w::p("footer-span1") ?>

@@ -404,7 +404,7 @@ class Wirby {
 
   // complete an url with language key (if it's not the default lang)
   static function to($page){
-    $to = array_search($page, c::get("routes_i18n"));
+    $to = $page == "" ? "" : array_search($page, c::get("routes_i18n"));
     $to = $to ? $to : $page; // maybe this page doesn't exist
     $lang = l::current(); // also here it's necessary to avoid 2 urls for 1 content
     return $lang == c::get("language") ? "/".$to : "/".$lang."/".$to;

@@ -46,18 +46,39 @@ body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
 
 #container{
   z-index: 1;
-  position: relative;
   overflow: hidden;
+}
+.container {
+  position: relative;
 }
 
 @media (min-width: 1200px){
-  #container{
+  #container, .container{
     /* also 940px instead of bootstrap's 1170px */
     width: 940px;
   }
 }
 
-#header{
+#header-border{
+  z-index: 3;
+  position: fixed;
+  background: rgba(255,255,255,0.4);
+  height: 150px;
+  width: 100%;
+  top: 0; left: 0;
+  padding-bottom: 4px;
+  -webkit-box-shadow: rgba(0,0,0,0.3) 0 1px 14px;
+  -moz-box-shadow: rgba(0,0,0,0.3) 0 1px 14px;
+  box-shadow: rgba(0,0,0,0.3) 0 1px 14px;
+}
+#header-border #header {
+  background: rgba(255,255,255,0.7);
+}
+#header .container {
+  height: 150px;
+}
+
+#header-dummy {
   height: 200px;
   position: relative;
 }
@@ -82,7 +103,7 @@ body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
 
 .telefon {
   position: fixed;
-  bottom: 40%;
+  top: 200px;
   right: -140px;
   -webkit-transition: all .2s ease-out;
   -moz-transition: all .2s ease-out;
@@ -97,19 +118,19 @@ body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
 #logo{
   position: absolute;
   top: 0;
-  left: 10px;
+  left: 20px;
   -webkit-transition: all .2s;
   -moz-transition: all .2s;
   -o-transition: all .2s;
   transition: all .2s;
 
-  padding: 0 4px 4px 4px;
+  /*padding: 0 4px 4px 4px;
   border-radius: 0 0 3px 3px;
-  background: rgba(255,255,255, 0.5);
+  background: rgba(255,255,255, 0.5);*/
 }
 #logo>div {
-  background: rgba(255,255,255,1);
-  padding: 5px 20px 15px 13px;
+  /*background: rgba(255,255,255,1);*/
+  padding: 20px 20px 15px 13px;
   margin: 0;
   border-radius: 0 0 4px 4px;
 }
@@ -123,20 +144,20 @@ body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
 
 .leap {
   position: absolute;
-  top: 50px;
-  right: 0;
-  padding: 4px;
-  border-radius: 7px;
-  background: rgba(255,255,255, 0.5);
+  top: 35px;
+  right: 10px;
+  /*padding: 4px;*/
+  /*border-radius: 7px;
+  background: rgba(255,255,255, 0.5);*/
 }
 
 .leap>div {
   /*background-color: #D85E5E;
-  background: rgba(216, 94, 94, 1);
-  text-shadow: 1px -1px 1px rgb(255, 255, 255);*/
-  background: rgba(255,255,255,0.8);
+  background: rgba(216, 94, 94, 1);*/
+  text-shadow: 1px 1px 2px rgb(255, 255, 255);
+  /*background: rgba(255,255,255,0.8);*/
   color: #D22817;
-  padding: 3px 15px 10px 8px;
+  /*padding: 3px 15px 10px 8px;*/
   margin: 0;
   border-radius: 4px;
 }
@@ -152,12 +173,18 @@ body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
   display: block;
   position: absolute;
   bottom: -15px;
-  right: 8px;
+  right: 0;
   font-size: 13px;
   line-height: 12px;
-  color: #fff;
+  text-shadow: 1px 1px 2px rgb(255, 255, 255);
+  color: #D22817;
+  opacity: 0.6;
+  /*color: #fff;
   background: none;
-  text-shadow: 0px 0px 2px #000;
+  text-shadow: 0px 0px 2px #000;*/
+}
+.leap a:hover {
+  opacity: 1.0;
 }
 
 #content.start {
@@ -441,8 +468,12 @@ h2 {
   bottom: 0;
   right: 8px;
 }
-.start h1{
-  margin-top: 50px;
+.start #start-h1{
+  margin-top: 40px;
+  margin-bottom: 0px;
+}
+.start #start-h2{
+  margin-top: 0px;
 }
 
 .start #start-schlagzeile{
