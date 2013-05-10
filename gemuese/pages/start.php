@@ -4,4 +4,4 @@
 <?= w::p("start-p") ?>
 <?= w::h2("start-schlagzeile") ?>
 <?= w::div("start-div") ?>
-<?= w::img("start-telefon", "Rufen Sie uns an", 200) ?>
+<? // w::img("start-telefon", "Rufen Sie uns an", 200) ?>

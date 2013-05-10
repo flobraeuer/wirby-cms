@@ -130,7 +130,25 @@ class Wirby {
   function forms(){
     $request = r::get("type", "");
 
-    if( $request == "order" && r::is_post() ){
+    if( $request == "contact" && r::is_post() ){
+      if( $data = r::get("message",false) ){
+        $msg = "<b>M&M Kontaktaufnahme</b><br>";
+        $msg .= "<i>Die Nachricht ist erfolgreich abgeschickt worden. Danke!</i>";
+        $msg .= "<p style='font-family: Courier New;'>";
+        $msg .= self::pad("Datum:").date("d.m.Y H:i:s")."<br>";
+        $msg .= self::pad("Name:").$data["name"]."<br>";
+        $msg .= self::pad("Telefon:").$data["number"]."<br>";
+        $msg .= self::pad("Email:").$data["email"]."<br>";
+        $msg .= self::pad("Computer:")."IP ".$_SERVER["REMOTE_ADDR"];//." (".$_SERVER["HTTP_USER_AGENT"].")";
+        $msg .= "</p>";
+        $msg .= "<p>Nachricht <i>".$data["subject"]."</i>:</p>";
+        $msg .= "<p>".$data["message"]."</p>";
+        $msg .= "-<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
+
+        $subject = "M&M Kontaktaufnahme von ".$data["name"];
+      }
+    }
+    elseif( $request == "order" && r::is_post() ){
       if( $data = r::get("order",false) ){
         $w = 20;
         $s = " ";
@@ -154,26 +172,28 @@ class Wirby {
 
         $msg .= "</p>";
         $msg .= "<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
+        $subject = "M&M Bestellung von ".$data["name"];
+      }
+    }
+    if($msg){
+      $msg = str_replace("  ", "&nbsp;&nbsp;", $msg);
+      self::mail($subject, $msg, $data["email"], $data["name"]);
 
-        $msg = str_replace("  ", "&nbsp;&nbsp;", $msg);
-        self::mail("M&M Bestellung von ".$data["name"], $msg, $data["email"], $data["name"]);
-
-        if( r::is_ajax() ){
-          content::type("json");
-          content::start();
-          $info = array(
-            "type" => "success",
-            "msg" => $msg,
-            "name" => $data["name"]
-          );
-          echo a::json($info);
-          content::end(false);
-          die();
-        }
-        else{
-          //c::set("has_info", $length." ".($length>1?"Einträge":"Eintrag")." neu");
-          //$track = track("content", $length.": ".$titles);
-        }
+      if( r::is_ajax() ){
+        content::type("json");
+        content::start();
+        $info = array(
+          "type" => "success",
+          "msg" => $msg,
+          "name" => $data["name"]
+        );
+        echo a::json($info);
+        content::end(false);
+        die();
+      }
+      else{
+        //c::set("has_info", $length." ".($length>1?"Einträge":"Eintrag")." neu");
+        //$track = track("content", $length.": ".$titles);
       }
     }
   }
@@ -184,8 +204,8 @@ class Wirby {
       $mail = new PHPMailer();
 
       $mail->AddAddress($to, $to_name);
-      $mail->AddAddress("bestellung@celik-obstgemuese.at", "Bestellsystem");
-      $mail->AddAddress("musa.celik1@hpeprint.com", "Bestellsystem");
+      // $mail->AddAddress("bestellung@celik-obstgemuese.at", "Bestellsystem");
+      // $mail->AddAddress("musa.celik1@hpeprint.com", "Bestellsystem");
       $mail->SetFrom("office@celik-obstgemuese.at", "Celik Obst Gemuese");
       // $mail->AddReplyTo($email["address"], $email["name"]);
 
@@ -456,12 +476,13 @@ class Wirby {
 
   // image tag with fallback and dimensions, wrapper
   static function img_tag($content, $w, $h, $class, $attrs=""){
-    $class = $class ? "class='$class'" : "";
+    $id = "id='$content-img'"; $id_box = "id='$content'";
+    $class = $class ? "class='$class'" : ""; $class_box = "class='$content img'";
     $attrs = $attrs . (self::is_a() ? " data-wirby='$content'" : "");
     $attrs = $attrs . ($w ? " width='$w'" : "") . ($h ? " height='$h'" : "");
-    $attr = "style='".($w ? " width:".$w."px;":"").($h?" height:".$h."px;":"")."'";
+    $size = "style='".($w ? " width:".$w."px;":"").($h?" height:".$h."px;":"")."'";
     $src = self::get($content, "http://placehold.it/".($w?"$w":"200").($h?"x$h":"")."&text=$content");
-    return "<div id='$content' class='img' $attr><img id='$content-img' $class $attrs src='$src' /></div>";
+    return "<div $id_box $class_box $size><img $id $class $attrs src='$src' /></div>";
   }
   static function h1($content, $class, $attrs){       return self::tag("h1", $content, $class, $attrs); }
   static function h2($content, $class, $attrs){       return self::tag("h2", $content, $class, $attrs); }
