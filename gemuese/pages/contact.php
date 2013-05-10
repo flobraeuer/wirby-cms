@@ -3,17 +3,17 @@
 <div class="row-fluid">
   <div class="span9">
     <?= w::h2("contact-h2-form") ?>
-    <form>
+    <form id="contact" method="post">
         <div class="controls controls-row">
-            <input id="name" name="name" type="text" class="span3" placeholder="Name">
-            <input id="mail" name="email" type="email" class="span3" placeholder="Email Adresse">
-            <input id="number" name="number" type="text" class="span3" placeholder="Telefonnummer">
+            <input id="contact-name" name="name" type="text" class="span3" placeholder="Name">
+            <input id="contact-email" name="email" type="email" class="span3" placeholder="Email Adresse">
+            <input id="contact-number" name="number" type="text" class="span3" placeholder="Telefonnummer">
         </div>
         <div class="controls controls-row">
-            <textarea id="message" name="message" class="span6 pull-left" placeholder="Ihre Nachricht an das Team von M&amp;M Celik" rows="5"></textarea>
-            <input id="subject" name="subject" type="text" class="span3" placeholder="Betreff der Nachricht">
+            <textarea id="contact-message" name="message" class="span6 pull-left" placeholder="Ihre Nachricht an das Team von M&amp;M Celik" rows="5"></textarea>
+            <input id="contact-subject" name="subject" type="text" class="span3" placeholder="Betreff der Nachricht">
             <br><br><br>
-            <button id="contact-submit" type="submit" class="span3 btn btn-danger input-medium">Absenden</button>
+            <button id="contact-btn" type="submit" class="span3 btn btn-danger input-medium">Absenden</button>
         </div>
     </form>
   </div>

@@ -5,7 +5,7 @@ function maps_ready(){
   else{
     log("map ready");
 
-    var mapCenter = new google.maps.LatLng(48.13728, 16.35954);
+    var mapCenter = new google.maps.LatLng(48.1709, 16.359);
     var map = new google.maps.Map(document.getElementById("map"), {
       zoom: 12,
       center: mapCenter,
@@ -26,7 +26,7 @@ function maps_ready(){
       overviewMapControl: false
     });
 
-    var markerPos = new google.maps.LatLng(48.1787, 16.376);
+    var markerPos = new google.maps.LatLng(48.13755, 16.35952);
     var marker = new google.maps.Marker({
       position: markerPos,
       map: map,
@@ -95,12 +95,12 @@ function site_ready(){
       else if(!$(this).val().length) $(this).val($(this).data("val"));
     });
 
-  $("#email").bind("submit", function(e){
+  $("#contact").bind("submit", function(e){
     e.preventDefault();
-    mail();
+    contact();
   });
-  $("#email a").bind("click", function(e){
-    e.preventDefault(); $("#email").trigger("submit"); return false;
+  $("#contact a").bind("click", function(e){
+    e.preventDefault(); $("#contact").trigger("submit"); return false;
   });
   log("form binded");
 
@@ -303,6 +303,49 @@ function send_order(){
   else alert("Bitte akzeptiere unsere Geschäftsbedingungen. Danke!");
 }
 
+
+// Validate Contact Form
+
+function contact(){
+  var post = {
+    "name": $("#contact-name").val(),
+    "email": $("#contact-email").val(),
+    "number": $("#contact-number").val(),
+    "subject": $("#contact-subject").val(),
+    "message": $("#contact-message").val()
+  };
+  log(post);
+  if(
+    post.name.length > 0 &&
+    post.number.length > 0 &&
+    post.email.length > 0 &&
+    post.subject.length > 0 &&
+    post.message.length > 0
+  ){
+    $("#contact-btn").addClass("disabled");
+    $.ajax({
+      url: "/",
+      type: "post",
+      data: { "type": "contact", "contact": post },
+      dataType: "json",
+      success: function(data, text, xhr){
+        log(data.msg);
+        alert("Danke für die Nachricht, "+data.name+"!");
+      },
+      error: function(xhr, text, error){
+        log(text+":");
+        log(error);
+        alert("Leider ist ein Fehler aufgetreten.\nRufen Sie uns bitte unter +43 660 6522007 an.\nDanke!")
+      },
+      complete: function(){
+        $("#contact-btn").removeClass("disabled");
+      }
+    });
+  }
+  else alert("Um Ihnen schnellstmöglich zu antworten,\nsind alle Angaben nötig. Danke!");
+};
+
+
 /**
  * Slide Tabs
  *
@@ -416,38 +459,6 @@ function showMaps() {
 //     });
 //   }
 // }
-
-// Validate Contact Form
-
-function mail(){
-  var params = {
-    "email": {
-      "name": $("#email-name").val(),
-      "address": $("#email-address").val(),
-      "message": $("#email-message").val()
-    }
-  };
-  log(params);
-
-  $.ajax({
-    type: "POST",
-    url: "/cms/mail.php",
-    data: params,
-    success: function(xhr, text, status){
-      if(xhr.status == "success") $("#email a").html("Nachricht versandt. Danke!").addClass("grey");
-      else $("#email a").html("Fehler: "+xhr.error).addClass("grey");
-    },
-    error: function(xhr, text, status){
-      log("error");
-      $("#email a").html("Fehler beim Versenden").addClass("grey");
-    },
-    complete: function(){
-      window.setTimeout(function(){
-        $("#email a").html("Neue Nachricht absenden").removeClass("grey");
-      }, 3000);
-    }
-  });
-};
 
 // Google Maps Images dynamically
 // var map1 = $("<img>"); map1.attr("src", "http://maps.google.com/maps/api/staticmap?center=48.23474,16.31957&zoom=14&size=640x273&maptype=roadmap&markers=color:gray%7Clabel:K%7C48.23874,16.31957&sensor=false");

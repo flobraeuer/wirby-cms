@@ -24,7 +24,7 @@ c::set("routes", array(
     "obst-korb"         => "fruits",
     "ueber-celik"       => "about",
     "kontakt"           => "contact",
-    "impressum"         => "imprint"
+    "impressum"         => "contact"
   ),
 
   "gemuese.en" => array(
@@ -33,7 +33,7 @@ c::set("routes", array(
     "fruits-basket"     => "fruits",
     "about-celik"       => "about",
     "contact"           => "contact",
-    "imprint"           => "imprint"
+    "imprint"           => "contact"
   ),
 
   "gemuese.es" => array(
@@ -42,7 +42,7 @@ c::set("routes", array(
     "cesta-de-frutas"   => "fruits",
     "quienes-somos"     => "about",
     "contacto"          => "contact",
-    "imprenta"          => "imprint"
+    "imprenta"          => "contact"
   )
 
 ));

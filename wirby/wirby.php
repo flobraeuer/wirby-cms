@@ -131,7 +131,7 @@ class Wirby {
     $request = r::get("type", "");
 
     if( $request == "contact" && r::is_post() ){
-      if( $data = r::get("message",false) ){
+      if( $data = r::get("contact",false) ){
         $msg = "<b>M&M Kontaktaufnahme</b><br>";
         $msg .= "<i>Die Nachricht ist erfolgreich abgeschickt worden. Danke!</i>";
         $msg .= "<p style='font-family: Courier New;'>";
@@ -141,9 +141,9 @@ class Wirby {
         $msg .= self::pad("Email:").$data["email"]."<br>";
         $msg .= self::pad("Computer:")."IP ".$_SERVER["REMOTE_ADDR"];//." (".$_SERVER["HTTP_USER_AGENT"].")";
         $msg .= "</p>";
-        $msg .= "<p>Nachricht <i>".$data["subject"]."</i>:</p>";
-        $msg .= "<p>".$data["message"]."</p>";
-        $msg .= "-<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
+        $msg .= "<p>Nachricht <i>'".$data["subject"]."'</i>:</p>";
+        $msg .= "<p><b>".$data["message"]."</b></p>";
+        $msg .= "<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
 
         $subject = "M&M Kontaktaufnahme von ".$data["name"];
       }
@@ -204,10 +204,10 @@ class Wirby {
       $mail = new PHPMailer();
 
       $mail->AddAddress($to, $to_name);
-      // $mail->AddAddress("bestellung@celik-obstgemuese.at", "Bestellsystem");
-      // $mail->AddAddress("musa.celik1@hpeprint.com", "Bestellsystem");
+      $mail->AddAddress("bestellung@celik-obstgemuese.at", "Bestellsystem");
+      $mail->AddAddress("musa.celik1@hpeprint.com", "Bestellsystem");
       $mail->SetFrom("office@celik-obstgemuese.at", "Celik Obst Gemuese");
-      // $mail->AddReplyTo($email["address"], $email["name"]);
+      $mail->AddReplyTo($email["address"], $email["name"]);
 
       $mail->Subject = $subject;
       $mail->AltBody = $msg;
