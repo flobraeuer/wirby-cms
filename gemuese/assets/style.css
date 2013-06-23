@@ -59,13 +59,15 @@ body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
   }
 }
 
+#header-border.scrollable{
+  position: fixed;
+  top: 0; left: 0;
+}
 #header-border{
   z-index: 3;
-  position: fixed;
   background: rgba(255,255,255,0.4);
   height: 150px;
   width: 100%;
-  top: 0; left: 0;
   padding-bottom: 4px;
   -webkit-box-shadow: rgba(0,0,0,0.3) 0 1px 14px;
   -moz-box-shadow: rgba(0,0,0,0.3) 0 1px 14px;
@@ -73,6 +75,7 @@ body.bg12 { background-image: url(../files/backgrounds/12.jpg); }
 }
 #header-border #header {
   background: rgba(255,255,255,0.7);
+  width: 100%;
 }
 #header .container {
   height: 150px;

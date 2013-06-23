@@ -17,6 +17,7 @@ function wirby_ready(){
   //wirby_editors.on("click",function(e){
   //  wirby_changed( $(this).attr("id") );
   //});
+
 };
 
 var wirby_count = 0;

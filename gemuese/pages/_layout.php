@@ -17,7 +17,7 @@
   <noscript><div class="alert alert-error">Sie haben in ihrem Browser leider kein Javascript aktiviert. Es kann zu Anzeigeproblemen kommen!</div></noscript>
   <img class="telefon" src="<?= wirby::asset('telefon.png'); ?>" alt="M&amp;M Celik ist erreichbar unter +4316151800" />
 
-  <div id="header-border">
+  <div id="header-border" class="scrollable">
     <div id="header">
       <div class="container">
         <div id="logo"><?= w::img("start-logo", "Familienbetrieb Celik", 100) ?></div>
@@ -29,7 +29,7 @@
           <?= w::a("leap-sub", w::to("about")) ?>
         </div>
 
-        <ul id="tab-menu" class="horizontal">
+        <ul id="tab-menu" class="horizontal scrollto">
           <li class='<?= w::is("start")  ?> left'><?= w::a("tab-start", w::to("")) ?></li>
           <li class='<?= w::is("news")   ?>'><?= w::a("tab-news",    w::to("news")) ?></li>
           <li class='<?= w::is("order")  ?>'><?= w::a("tab-order",   w::to("order")) ?></li>

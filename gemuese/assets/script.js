@@ -73,6 +73,38 @@ function site_ready(){
     });
   };
 
+  window.scroll = {
+    to:       $(".scrollto").offset().top, // menu
+    from:     $(".scrollto").offset().top + $(".scrollto").height(),
+    elm:      $(".scrollable"), // header
+    bubble:   null,
+    bubblei:  0,
+    done:     false
+  };
+  $(window).on("scroll", function(e){
+    s = window.scroll;
+    console.log(s);
+    window.clearTimeout(s.bubble);
+    s.bubblei += 1;
+    s.bubble = window.setTimeout(function(e){
+      s = window.scroll;
+      console.log(s);
+      s.bubblei = 0;
+      if( window.pageYOffset >= s.from){
+        if(s.done == false){
+          s.elm.animate("top", -s.to);
+          s.done = true;
+        }
+      }else{
+        if(s.done == true){
+          s.elm.animate("top", 0);
+          s.done = false;
+        }
+      }
+      // window.scrollTo( window.scroll_top, 0);
+    }, 30);
+  });
+
   // activate if there is one active
   //$("#tab-menu .active a").trigger("click");
 
