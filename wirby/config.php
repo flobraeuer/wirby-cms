@@ -77,6 +77,8 @@ c::set("assets_admin", array( // js libraries used when logged in
 c::set("microsoft_verification", false);
 c::set("google_analytics", false); // "UA-7082989-19");
 c::set("google_plus", false);
+c::set("adminbar_position", "bottom");
+
 
 
 ?>
