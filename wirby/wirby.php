@@ -102,6 +102,18 @@ class Wirby {
       die("Wirby: please create a routes.php file and specify domains over there.");
     }
 
+    // set paths
+    global $root;
+    c::set("wirby_path", $root."/"."wirby/assets/"); // template dir for internal wirby dom
+    c::set("site_path",  $root."/".c::get("site")."/" );
+    c::set("tmpls_path", c::get("site_path").c::get("tmpls_path")."/" ); // template dir in project folder
+
+    // include custom config
+    $config = c::get("site_path")."/config.php";
+    if($config) c::load( $config );
+    //else echo "Keine Einstellungen unter $config gefunden";
+
+
     // prepare localized routes
     $routes = c::get("routes");                                   // load all routes
     if(! $routes){ die("Wirby: routes are not defined"); }
@@ -129,10 +141,11 @@ class Wirby {
 
   function forms(){
     $request = r::get("type", "");
+    $ourself = c::get("mail.ourself", array("",""));
 
     if( $request == "contact" && r::is_post() ){
       if( $data = r::get("contact",false) ){
-        $msg = "<b>M&M Kontaktaufnahme</b><br>";
+        $msg = "<b>".$ourself[0]." Kontaktaufnahme</b><br>";
         $msg .= "<i>Die Nachricht ist erfolgreich abgeschickt worden. Danke!</i>";
         $msg .= "<p style='font-family: Courier New;'>";
         $msg .= self::pad("Datum:").date("d.m.Y H:i:s")."<br>";
@@ -143,16 +156,16 @@ class Wirby {
         $msg .= "</p>";
         $msg .= "<p>Nachricht <i>'".$data["subject"]."'</i>:</p>";
         $msg .= "<p><b>".$data["message"]."</b></p>";
-        $msg .= "<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
+        $msg .= "<i>Ihr ".$ourself[0]." Team<br>".$ourself[1]."</i>";
 
-        $subject = "M&M Kontaktaufnahme von ".$data["name"];
+        $subject = $ourself[0]." Kontaktaufnahme von ".$data["name"];
       }
     }
     elseif( $request == "order" && r::is_post() ){
       if( $data = r::get("order",false) ){
         $w = 20;
         $s = " ";
-        $msg = "<b>M&M Online Bestellung</b><br>";
+        $msg = "<b>".$ourself[0]." Online Bestellung</b><br>";
         $msg .= "<i>Die Bestellung ist erfolgreich abgeschickt worden. Danke!</i>";
         $msg .= "<p style='font-family: Courier New;'>";
         $msg .= self::pad("Datum:").date("d.m.Y H:i:s")."<br>";
@@ -167,12 +180,14 @@ class Wirby {
         $msg .= "<p style='font-family: Courier New;'>";
 
         foreach($data["items"] as $i => $item){
-          $msg .= "<i>".str_pad($i+1,2,"0",STR_PAD_LEFT).".</i> ".self::pad($item[0],40).$item[1]." ".$item[2]."<br>";
+          $msg .= "<i>".str_pad($i+1,2,"0",STR_PAD_LEFT).".</i> ".self::pad($item[0],35).$item[1]." ".$item[2];
+          if($item[3]) $msg .= " um ".$item[3];
+          $msg .= "<br>";
         }
 
         $msg .= "</p>";
-        $msg .= "<i>Celik Gro&szlig;handel<br>+43 660 6522007</i>";
-        $subject = "M&M Bestellung von ".$data["name"];
+        $msg .= "<i>Ihr ".$ourself[0]." Team<br>".$ourself[1]."</i>";
+        $subject = $ourself[0]." Bestellung von ".$data["name"];
       }
     }
     if($msg){
@@ -204,10 +219,12 @@ class Wirby {
       $mail = new PHPMailer();
 
       $mail->AddAddress($to, $to_name);
-      $mail->AddAddress("bestellung@celik-obstgemuese.at", "Bestellsystem");
-      $mail->AddAddress("musa.celik1@hpeprint.com", "Bestellsystem");
-      $mail->SetFrom("office@celik-obstgemuese.at", "Celik Obst Gemuese");
-      $mail->AddReplyTo($email["address"], $email["name"]);
+      if($addy = c::get("mail.to", false))   $mail->AddAddress($addy[0], $addy[1]);
+      if($addy = c::get("mail.to2", false))  $mail->AddAddress($addy[0], $addy[1]);
+      if($addy = c::get("mail.from", false)) $mail->SetFrom($addy[0], $addy[1]);
+      else                                   $mail->SetFrom($to, $to_name);
+
+      $mail->AddReplyTo($to, $to_name);
 
       $mail->Subject = $subject;
       $mail->AltBody = $msg;
@@ -217,9 +234,9 @@ class Wirby {
       $mail->IsSMTP();                // telling the class to use SMTP
       $mail->SMTPDebug = false;       // enables SMTP debug information (1 = errors and messages, 2 = messages only)
       $mail->SMTPAuth  = true;                          // enable SMTP authentication
-      $mail->Host      = "wp266.webpack.hosteurope.de"; // SMTP server
-      $mail->Username  = "wp10625343-bestellung";       // SMTP account username
-      $mail->Password  = "proworx01";                   // SMTP account password
+      $mail->Host      = c::get("mail.host"); // SMTP server
+      $mail->Username  = c::get("mail.user");       // SMTP account username
+      $mail->Password  = c::get("mail.pwd");                   // SMTP account password
 
       $send = $mail->Send();
       return true;
@@ -331,8 +348,6 @@ class Wirby {
   function render(){
     global $root;
     // c::set("cache_path", $root."/".c::get("cache_path")."/" ); // cache directory (default in wirby folder)
-    c::set("tmpls_path", $root."/".c::get("site")."/".c::get("tmpls_path")."/" ); // template dir in project folder
-    c::set("wirby_path", $root."/"."wirby/assets/"); // template dir for internal wirby dom
 
     /**
      * Array

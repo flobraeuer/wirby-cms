@@ -7,7 +7,10 @@
 c::set("domains", array(
   "gemuese.test" => "gemuese",
   "celik-obstgemuese.at" => "gemuese",
-  "www.celik-obstgemuese.at" => "gemuese"
+  "www.celik-obstgemuese.at" => "gemuese",
+  "pastolore.test" => "pastolore",
+  "pastolore.webarchitects.at" => "pastolore",
+  "www.pastolore.webarchitects.at" => "pastolore"
 ));
 
 /**
@@ -43,6 +46,11 @@ c::set("routes", array(
     "quienes-somos"     => "about",
     "contacto"          => "contact",
     "imprenta"          => "contact"
+  ),
+
+  "pastolore.de" => array(
+    "online-bestellung" => "order",
+    "kontakt"           => "contact"
   )
 
 ));
