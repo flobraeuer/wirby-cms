@@ -5,7 +5,7 @@ function maps_ready(){
   else{
     log("map ready");
 
-    var mapCenter = new google.maps.LatLng(48.1709, 16.359);
+    var mapCenter = new google.maps.LatLng(48.25034, 16.4445);
     var map = new google.maps.Map(document.getElementById("map"), {
       zoom: 12,
       center: mapCenter,
@@ -26,12 +26,12 @@ function maps_ready(){
       overviewMapControl: false
     });
 
-    var markerPos = new google.maps.LatLng(48.13755, 16.35952);
+    var markerPos = new google.maps.LatLng(48.2203, 16.381);
     var marker = new google.maps.Marker({
       position: markerPos,
       map: map,
       label: "M",
-      title:"M&M Obst und Gemüse"
+      title:"Mesh GmbH"
     });
   };
 };
@@ -72,33 +72,6 @@ function site_ready(){
       return false;
     });
   };
-
-  s = window.scroll = {
-    elm:      $(".scroll-elm"),                       // (header)  scrollable 'elm'
-    from:     $(".scroll-from").offset().top,         // (content) check if 'from' touches 'elm'
-    to:       -($(".scroll-to").offset().top - 10),   // (menu)    if so: scroll it to this position
-    done:     false
-  };
-  s.fromelm = s.elm.offset().top + s.elm.height();
-  s.diff = s.from - s.fromelm; // check the bottom edges
-  $(window).on("scroll", function(e){
-    s = window.scroll;
-    s.is = window.pageYOffset;
-    console.log(s);
-    if( s.is >= s.diff ){
-      if(s.done == false){
-        // s.at = s.diff - s.is;
-        // if(s.at <= s.to){ s.done = true; s.at = s.to}
-        s.done = true;
-        s.elm.animate({top: s.to}, "fast");
-      }
-    }else{
-      if(s.done == true){
-        s.done = false;
-        s.elm.animate({top: 0});
-      }
-    }
-  });
 
   // activate if there is one active
   //$("#tab-menu .active a").trigger("click");
@@ -148,7 +121,7 @@ function site_ready(){
       "bPaginate": true,
       "sPaginationType": "bootstrap",
       "bLengthChange": false,
-      "iDisplayLength": 60,
+      "iDisplayLength": 20,
       "oLanguage": {
         "sSearch": "Nach _INPUT_ suchen",
         "oPaginate": {
@@ -167,13 +140,20 @@ function site_ready(){
       "fnCreatedRow": function( row, data, index ) {
         $("td", row).first().prepend( $("<input>").attr("type", "checkbox") );
         // if the checkbox is clicked, the TableTools click is also triggered, so there is no binding necessary
-        var last = $("td", row).last();
+
+        var last = $("td", row).eq(-1);
+        var text = last.text();
+        if(!text.trim().length) text = "mal";
         last.html( ich.add_input({
-          "verpackung": last.text()
+          "verpackung": text
         }) );
-        last.find("input").on("blur change", function(e){
+        var menge = last.find("input")
+        menge.on("blur change", function(e){
           check_item( last.parent()[0] );
         });
+        var preis = $("td", row).eq(-2);
+        menge.data("preis", parseFloat(preis.text().replace(",",".")) );
+
       }
     } );
     log("datatable created");
@@ -186,31 +166,52 @@ function site_ready(){
     } );
     log("datatable tools");
 
+    // bind filters
+    $(".dataTableFilters ul").append("<li style='opacity:0.4'>x</li>");
+    var filters = $(".dataTableFilters").find("li");
+    filters.each(function(i, filter){
+      filter = $(filter);
+      filter.addClass("btn");
+      filter.on("click", function(){
+        var text = $(this).text();
+        if( text == "x" ) text = "";
+        window.dataTable.fnFilter( text );
+      });
+    });
+    log("filters binded");
+
+
     // add demo chart
     ich.add_item({
       "demo": true,
-      "artikel": "Ananas Extra Sweet",
-      "menge": 5,
-      "verpackung": "Stk"
+      "artikel": "Tagessuppe",
+      "menge": "1",
+      "verpackung": "mal",
+      "preis": "3.5"
     }).appendTo("#order-items");
     ich.add_item({
       "demo": true,
-      "artikel": "Apfel Golden Delicious",
-      "menge": 8,
-      "verpackung": "kg"
+      "artikel": "Kebab mit Reis und Salat",
+      "menge": "1",
+      "verpackung": "mal",
+      "preis": "4,50"
     }).appendTo("#order-items");
 
     // bind buttons
-    $("#step1-btn").on("click", function(){
+    $("#step1-btn").on("click", function(e){
+      e.preventDefault();
       order_items();
       $("#step1").hide();
       $("#step2").show();
+      window.scrollTo(0, 0);
     });
-    $("#step2-btn").on("click", function(){
+    $("#step2-btn").on("click", function(e){
+      e.preventDefault();
       //$(this).addClass("disabled");
       send_order();
     });
-    $("#step2-back-btn").on("click", function(){
+    $("#step2-back-btn").on("click", function(e){
+      e.preventDefault();
       $("#step2").hide();
       $("#step1").show();
     });
@@ -225,16 +226,21 @@ function check_item(row){
   var input = $("input:text", row);
   if(window.dataTools.fnIsSelected(row)){
     if(!input.val().length){
-      window.dataTools.fnDeselect(row);
-    }else{
+
+      input.val("1");
       $("input:checkbox", row).attr("checked", true);
-    };
+      //window.dataTools.fnDeselect(row);
+    }//else{
+    //  $("input:checkbox", row).attr("checked", true);
+    //};
   }else{
     if(input.val().length){
-      window.dataTools.fnSelect(row);
-    }else{
+      input.val("");
       $("input:checkbox", row).attr("checked", false);
-    };
+      //window.dataTools.fnSelect(row);
+    }//else{
+    //  $("input:checkbox", row).attr("checked", false);
+    //};
   };
 };
 
@@ -260,11 +266,13 @@ function order_item(row){
     "id": "order-item-"+name,
     "artikel": data[0],
     "menge": $("input:text", row).val(),
-    "verpackung": $("button", row).text().trim()
+    "verpackung": $("button", row).text().trim(),
+    "preis": $("input:text", row).data("preis")
   }).appendTo(list);
 
   $(".demo", list).remove();
-  info.removeClass("alert-error").text("In deiner Bestellung befinden sich "+list.children().length+" Artikel.");
+  info.removeClass("alert-error").html("In deiner Bestellung befinden sich "+list.children().length+" Artikel. <b>Preis in Summe: <span id='order-sum'></span> €</b>");
+  calculate_order();
 };
 
 function order_dropdown(element){
@@ -274,6 +282,25 @@ function order_dropdown(element){
   d.text( e.text() );
 };
 
+function calculate_order(){
+  var items_sum = 0;
+  $("#order-items").children("li").each(function(i, item){
+    item = $(item);
+    var menge = item.find("input[name=menge]");
+    var preis = item.find("input[name=preis]");
+    var item_sum = parseInt(menge.val()) * parseFloat(preis.data("preis"));
+    console.log(item_sum);
+    item_sum = Math.floor(item_sum*10)/10;
+    items_sum += item_sum;
+    item_sum = (""+item_sum).replace(".",",");
+    preis.val(item_sum);
+  });
+  console.log(items_sum);
+  items_sum = Math.floor(items_sum*10)/10;
+  items_sum = (""+items_sum).replace(".",",");
+  $("#order-sum").text(items_sum);
+}
+
 function send_order(){
   var items = [];
   $("#order-items").children("li").each(function(i, item){
@@ -281,12 +308,12 @@ function send_order(){
     items.push([
       item.find("input[name=artikel]").val(),
       item.find("input[name=menge]").val(),
-      item.find("input[name=verpackung]").val()
+      item.find("input[name=verpackung]").val(),
+      item.find("input[name=preis]").val()
     ]);
   });
   var post = {
     "name": $("input[name=gender]:checked").val()+" "+$("input[id=name]").val(),
-    "customer": $("input[id=customer]").val(),
     "number": $("input[id=number]").val(),
     "email": $("input[id=email]").val(),
     "street": $("input[id=street]").val(),
@@ -294,11 +321,11 @@ function send_order(){
     "town": $("input[id=town]").val(),
     "items": items
   }
-  if($("input[id=terms]").is(":checked")){
+
+  if($("#accept-terms").is(":checked")){
     if(
       $("input[name=gender]:checked").length > 0 &&
       post.name.length > 0 &&
-      post.customer.length > 0 &&
       post.number.length > 0 &&
       post.email.length > 0 &&
       post.street.length > 0 &&
@@ -318,7 +345,7 @@ function send_order(){
         error: function(xhr, text, error){
           log(text+":");
           log(error);
-          alert("Leider ist ein Fehler aufgetreten.\nRufen Sie uns bitte unter +43 660 6522007 an.\nDanke!")
+          alert("Leider ist ein Fehler aufgetreten.\nRufen Sie uns bitte unter +43 676 4721227 an.\nDanke!")
         },
         complete: function(){
           $("#step2-btn").removeClass("disabled");

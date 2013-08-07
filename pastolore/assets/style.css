@@ -404,6 +404,10 @@ h2 {
   cursor: inherit !important;
 }
 
+.dataTableFilters .btn {
+  margin: 5px;
+}
+
 .dataTable table {
   width: 100%;
 }
@@ -416,13 +420,13 @@ h2 {
   border-bottom: none;
 }
 .dataTable table tr.odd {
-  background-color: #eee;
+  background-color: rgba(182, 29, 34, 0.03);
 }
 .dataTable table tr.even {
-  background-color: #f5f5f5;
+  background-color: rgba(182, 29, 34, 0.05);
 }
 .dataTable table tr.active td {
-  background-color: #D85E5E !important;
+  background-color: rgba(182, 29, 34, 0.8) !important;
   color: white;
 }
 .dataTable table input[type=checkbox] {

@@ -79,6 +79,4 @@ c::set("google_analytics", false); // "UA-7082989-19");
 c::set("google_plus", false);
 c::set("adminbar_position", "bottom");
 
-
-
 ?>
