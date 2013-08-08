@@ -1,3 +1,13 @@
+# enable PHP error logging
+php_flag  log_errors on
+php_value error_log  ./wirby/logs/php_error.log
+
+<Files php_error.log>
+ Order allow,deny
+ Deny from all
+ Satisfy All
+</Files>
+
 RewriteEngine on
 RewriteBase /
 
@@ -11,18 +21,18 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?page=$1 [NC,QSA,L]
 
-#RewriteCond %{QUERY_STRING} ^hash(.+)
-#RewriteRule ^$ /cms/?%1 [NE,N,R=301]
+# RewriteCond %{QUERY_STRING} ^hash(.+)
+# RewriteRule ^$ /cms/?%1 [NE,N,R=301]
 
 # Enforce www
 # If you have subdomains, you can add them to
 # the list using the "|" (OR) regex operator
-#RewriteCond %{HTTP_HOST} !^(www|dev) [NC]
-#RewriteRule ^(.*)$ http://www.med-gutachten.at/ [L,R=301]
+# RewriteCond %{HTTP_HOST} !^(www|dev) [NC]
+# RewriteRule ^(.*)$ http://www.med-gutachten.at/ [L,R=301]
 
 # Enforce NO www
-#RewriteCond %{HTTP_HOST} ^www [NC]
-#RewriteRule ^(.*)$ http://domain.tld/$1 [L,R=301]
+# RewriteCond %{HTTP_HOST} ^www [NC]
+# RewriteRule ^(.*)$ http://domain.tld/$1 [L,R=301]
 
-#RewriteCond %{REQUEST_URI} !^(/|/index.php|/blah.php)$
-#RewriteRule ^(.*)$ index.php?name=$1 [R]
+# RewriteCond %{REQUEST_URI} !^(/|/index.php|/blah.php)$
+# RewriteRule ^(.*)$ index.php?name=$1 [R]

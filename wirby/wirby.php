@@ -2,8 +2,8 @@
 
 date_default_timezone_set("Europe/Vienna");
 if($debug = true){
-  error_reporting(E_STRICT); // E_ALL
-  ini_set("display_errors", true);
+  error_reporting(E_ALL); // E_STRICT
+  ini_set("display_errors", false);
 }
 c::set("has_error", false); // error message
 c::set("has_info", false);  // info msg
@@ -21,7 +21,7 @@ class Wirby {
     $this->forms();          // forms: order, contact
     $this->session();        // admin: check admin session
     $this->admin();          // admin: render wirby
-    return $this->render();  // content: render
+    // returnvalue has to be an object ... return $this->render();  // content: render
   }
 
   /*****************************************************************************
@@ -30,21 +30,26 @@ class Wirby {
 
   static function test($debug){
     echo "Wirby logger exits: \n";
-    print_r( $debug ? $debug : new Time() );
+    print_r( $debug ? $debug : date('Y-m-d H:i:s') );
     exit;
   }
 
   static function log(){
+    global $root, $debug;
     if($debug == true){
-      // https://docs.google.com/spreadsheet/ccc?key=0AqmhzrmZU8kqdFJnd1NPSzY2NzFhUWFvamJkMmYwdUE#gid=0
-      $messages = '?logID=agtzfmxvZy1kcml2ZXILCxIDTG9nGLmCBww';
-      foreach (func_get_args() as $a) $messages .= ("&m%5B%5D=".urlencode($a));
-      $fp = fsockopen("log-drive.appspot.com", 80);
-      $h = "GET /logd$messages HTTP/1.1\r\n";
-      $h .= "Host: log-drive.appspot.com\r\n";
-      $h.= "Connection: Close\r\n\r\n";
-      fwrite($fp, $h);
-      fclose($fp);
+      $msg = "".date('Y-m-d H:i:s');
+      foreach (func_get_args() as $a) $msg .= "\t".$a;
+      error_log($msg."\n", 3, $root."/wirby/logs/wirby.log");
+
+      // https://docs.google.com/spreadsheet/ccc?key=nullAqmhzrmZU8kqdFJnd1NPSzY2NzFhUWFvamJkMmYwdUE#gid=null
+      // $messages = '?logID=agtzfmxvZy1kcml2ZXILCxIDTG9nGLmCBww';
+      // foreach (func_get_args() as $a) $messages .= ("&m%5B%5D=".urlencode($a));
+      // $fp = fsockopen("log-drive.appspot.com", 80);
+      // $h = "GET /logd$messages HTTP/1.1\r\n";
+      // $h .= "Host: log-drive.appspot.com\r\n";
+      // $h.= "Connection: Close\r\n\r\n";
+      // fwrite($fp, $h);
+      // fclose($fp);
     }
   }
 
@@ -169,11 +174,11 @@ class Wirby {
         $msg .= "<i>Die Bestellung ist erfolgreich abgeschickt worden. Danke!</i>";
         $msg .= "<p style='font-family: Courier New;'>";
         $msg .= self::pad("Datum:").date("d.m.Y H:i:s")."<br>";
-        $msg .= self::pad("Name:").$data["name"]."<br>";
-        $msg .= self::pad("Firma:").$data["customer"]."<br>";
-        $msg .= self::pad("Adresse:").$data["code"]." ".$data["town"].", ".$data["street"]."<br>";
-        $msg .= self::pad("Telefon:").$data["number"]."<br>";
-        $msg .= self::pad("Email:").$data["email"]."<br>";
+        if(isset($data["name"]))     $msg .= self::pad("Name:").$data["name"]."<br>";
+        if(isset($data["customer"])) $msg .= self::pad("Firma:").$data["customer"]."<br>";
+        if(isset($data["code"]))     $msg .= self::pad("Adresse:").$data["code"]." ".$data["town"].", ".$data["street"]."<br>";
+        if(isset($data["number"]))   $msg .= self::pad("Telefon:").$data["number"]."<br>";
+        if(isset($data["email"]))    $msg .= self::pad("Email:").$data["email"]."<br>";
         $msg .= self::pad("Computer:")."IP ".$_SERVER["REMOTE_ADDR"];//." (".$_SERVER["HTTP_USER_AGENT"].")";
         $msg .= "</p>";
         $msg .= "<i>Positionen der Bestellung:</i>";
@@ -190,15 +195,15 @@ class Wirby {
         $subject = $ourself[0]." Bestellung von ".$data["name"];
       }
     }
-    if($msg){
+    if(isset($msg)){
       $msg = str_replace("  ", "&nbsp;&nbsp;", $msg);
-      self::mail($subject, $msg, $data["email"], $data["name"]);
+      $sent = self::mail($subject, $msg, $data["email"], $data["name"]);
 
       if( r::is_ajax() ){
         content::type("json");
         content::start();
         $info = array(
-          "type" => "success",
+          "type" => ($sent ? "success" : "error"),
           "msg" => $msg,
           "name" => $data["name"]
         );
@@ -232,17 +237,21 @@ class Wirby {
       $mail->MsgHTML( $msg );
 
       $mail->IsSMTP();                // telling the class to use SMTP
-      $mail->SMTPDebug = false;       // enables SMTP debug information (1 = errors and messages, 2 = messages only)
-      $mail->SMTPAuth  = true;                          // enable SMTP authentication
-      $mail->Host      = c::get("mail.host"); // SMTP server
-      $mail->Username  = c::get("mail.user");       // SMTP account username
-      $mail->Password  = c::get("mail.pwd");                   // SMTP account password
+      $mail->SMTPDebug  = c::get("mail.debug", 1);       // enables SMTP debug information (1 = errors and messages, 2 = errors only)
+      $mail->SMTPAuth   = c::get("mail.auth");                          // enable SMTP authentication
+      $mail->SMTPSecure = c::get("mail.secure");
+      $mail->Host       = c::get("mail.host"); // SMTP server
+      $mail->Username   = c::get("mail.user");       // SMTP account username
+      $mail->Password   = c::get("mail.pwd");                   // SMTP account password
 
-      $send = $mail->Send();
-      return true;
+      self::log("Mail send");
+      $sent = $mail->Send();
+      self::log("Mail ".($sent?"":"not ")."sent");
+      return $sent;
 
     } catch (Exception $e) {
-      echo a::json($json_encode( array("status" => "error", "msg" => ($e->getMessage()) ) ) );
+      self::log("Fehler"); //$e->getMessage());
+      echo a::json($json_encode( array("status" => "error", "msg" => "'".($e->getMessage())."'" ) ) );
       content::end(false);
       die();
     };
@@ -398,7 +407,7 @@ class Wirby {
   }
 
   // wirby config getter
-  static function c($config, $child){
+  static function c($config, $child=false){
     $val = c::get($config,false);
     if(! $val) $val = s::get($config,false); // look for it in our session store
     if($child) $val = $val[$child]; // http://lucdebrouwer.nl/stop-waiting-start-array-dereferencing-in-php-now/
@@ -471,10 +480,10 @@ class Wirby {
   }
 
   // get the content of a db entry
-  static function get($content, $alt, $pre){
+  static function get($content, $alt=false, $pre=false){
     $contents = c::get("content");
-    $matching = $contents["$content"][l::current()];  // prefered lang
-    if(!$matching) $matching = $contents["$content"][c::get("language")]; // default lang
+    $matching = $contents["$content"][l::current()];        // prefered lang
+    if(!$matching) $matching = $contents["$content"][c::get("language")];  // default lang
     return $matching ? ($pre ? $pre : "").$matching : ($alt ? $alt : $content);
   }
 
@@ -499,20 +508,20 @@ class Wirby {
     $src = self::get($content, "http://placehold.it/".($w?"$w":"200").($h?"x$h":"")."&text=$content");
     return "<div $id_box $class_box $size><img $id $class $attrs src='$src' /></div>";
   }
-  static function h1($content, $class, $attrs){       return self::tag("h1", $content, $class, $attrs); }
-  static function h2($content, $class, $attrs){       return self::tag("h2", $content, $class, $attrs); }
-  static function h3($content, $class, $attrs){       return self::tag("h3", $content, $class, $attrs); }
-  static function h4($content, $class, $attrs){       return self::tag("h4", $content, $class, $attrs); }
-  static function h5($content, $class, $attrs){       return self::tag("h5", $content, $class, $attrs); }
-  static function h6($content, $class, $attrs){       return self::tag("h6", $content, $class, $attrs); }
-  static function p ($content, $class, $attrs){       return self::tag("p",  $content, $class, $attrs); }
-  static function div($content, $class, $attrs){      return self::tag("div", $content, $class, $attrs); }
-  static function span($content, $class, $attrs){     return self::tag("span", $content, $class, $attrs); }
-  static function button ($content, $class, $attrs){  return self::tag("button",  $content, $class, $attrs); }
-  static function a ($content, $url="#", $class, $attrs=""){          return self::tag("a", $content, $class, $attrs." href='$url'"); }
-  static function label ($for, $class, $attrs="", $inner=""){         return self::tag("label", $for."-label", $class, $attrs." for='$for'", $inner); }
-  static function input ($type, $content, $class, $attrs=""){         return self::tag("input", $content, $class, $attrs." type='$type' id='$content'"); }
-  static function img ($content, $alt="", $w, $h, $class, $attrs=""){ return self::img_tag($content, $w, $h, $class, $attrs." alt='$alt'"); }
+  static function h1($content, $class=null, $attrs=null){           return self::tag("h1", $content, $class, $attrs); }
+  static function h2($content, $class=null, $attrs=null){           return self::tag("h2", $content, $class, $attrs); }
+  static function h3($content, $class=null, $attrs=null){           return self::tag("h3", $content, $class, $attrs); }
+  static function h4($content, $class=null, $attrs=null){           return self::tag("h4", $content, $class, $attrs); }
+  static function h5($content, $class=null, $attrs=null){           return self::tag("h5", $content, $class, $attrs); }
+  static function h6($content, $class=null, $attrs=null){           return self::tag("h6", $content, $class, $attrs); }
+  static function p ($content, $class=null, $attrs=null){           return self::tag("p",  $content, $class, $attrs); }
+  static function div($content, $class=null, $attrs=null){          return self::tag("div", $content, $class, $attrs); }
+  static function span($content, $class=null, $attrs=null){         return self::tag("span", $content, $class, $attrs); }
+  static function button ($content, $class=null, $attrs=null){      return self::tag("button",  $content, $class, $attrs); }
+  static function a ($content, $url="#", $class=null, $attrs=""){   return self::tag("a", $content, $class, $attrs." href='$url'"); }
+  static function label ($for, $class=null, $attrs="", $inner=""){  return self::tag("label", $for."-label", $class, $attrs." for='$for'", $inner); }
+  static function input ($type, $content=null, $class=null, $attrs=""){  return self::tag("input", $content, $class, $attrs." type='$type'"); }
+  static function img ($content, $alt="", $w=null, $h=null, $class=null, $attrs=""){ return self::img_tag($content, $w, $h, $class, $attrs." alt='$alt'"); }
 }
 
 class w extends wirby {

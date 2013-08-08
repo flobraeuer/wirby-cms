@@ -387,8 +387,8 @@ h2 {
   width: 128px;
 }
 .input-minii {
-  width: 30px;
-  height: 20px;
+  width: 30px !important;
+  height: 20px !important;
 }
 @media (max-width: 767px){
   /* in bootstrap.min.css:859 there is a .input-append{width: auto;} */
@@ -431,6 +431,7 @@ h2 {
 }
 .dataTable table input[type=checkbox] {
   margin: 0 10px 3px 0;
+  float: left;
 }
 
 .demo {
